@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Drive — HTML Cloud Drive (Unlimited)</title>
+  <style>
+    :root {
+      --blue: #1a73e8; --blue2: #0b57d0; --bg: #f8fafd; --surface: #fff;
+      --text: #202124; --muted: #5f6368; --line: #dadce0; --hover: #f1f3f4;
+      --selected: #e8f0fe; --shadow: 0 1px 2px rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Roboto, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+    button, input { font: inherit; }
+    header { height: 64px; background: var(--surface); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; padding: 0 18px; position: sticky; top: 0; z-index: 20; }
+    .logo { display: flex; align-items: center; gap: 10px; width: 230px; color: #5f6368; font-size: 22px; white-space: nowrap; }
+    .logoMark { width: 34px; height: 34px; border-radius: 6px; background: #1a73e8; color: white; display: grid; place-items: center; font-size: 19px; font-weight: 700; }
+    .search { flex: 1; max-width: 720px; position: relative; }
+    .search input { width: 100%; height: 48px; border: 0; background: #e9eef6; border-radius: 24px; padding: 0 20px 0 48px; font-size: 16px; outline: none; color: #202124; }
+    .search input:focus { background: #fff; box-shadow: inset 0 0 0 1px #dadce0, 0 1px 3px rgba(60,64,67,.25); }
+    .search span { position: absolute; left: 18px; top: 13px; color: #5f6368; font-size: 22px; }
+    .headerBtns { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+    .iconBtn { width: 42px; height: 42px; border: 0; border-radius: 50%; background: transparent; cursor: pointer; color: #5f6368; font-size: 20px; }
+    .iconBtn:hover { background: var(--hover); }
+    .app { display: grid; grid-template-columns: 250px minmax(0,1fr); min-height: calc(100vh - 64px); }
+    aside { background: #fff; padding: 14px 10px; border-right: 1px solid #eee; }
+    .new { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 20px; border: 1px solid #dadce0; border-radius: 16px; background: #fff; box-shadow: 0 1px 2px rgba(60,64,67,.2); cursor: pointer; font-weight: 500; font-size: 15px; color: #202124; margin: 2px 0 13px 4px; }
+    .new:hover { box-shadow: 0 2px 5px rgba(60,64,67,.25); }
+    .plus { font-size: 26px; color: #1a73e8; font-weight: 300; }
+    nav { display: grid; gap: 2px; }
+    nav button { border: 0; background: transparent; text-align: left; height: 36px; padding: 0 14px; border-radius: 0 18px 18px 0; color: #3c4043; cursor: pointer; }
+    nav button:hover { background: #f1f3f4; }
+    nav button.active { background: #e8f0fe; color: #0b57d0; font-weight: 600; }
+    .storage { margin: 22px 14px 0; padding-top: 15px; border-top: 1px solid #e0e0e0; color: #5f6368; }
+    .storageTitle { margin-bottom: 9px; color: #3c4043; font-weight: 600; }
+    .progress { height: 5px; background: #e0e0e0; border-radius: 5px; overflow: hidden; }
+    .progress i { display: block; height: 100%; background: #1a73e8; width: 100%; }
+    .storage small { display: block; margin-top: 8px; line-height: 1.45; }
+    
+    main { padding: 16px 24px 30px; overflow: hidden; }
+    .topline { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+    h1 { font-size: 22px; font-weight: 400; margin: 0; flex: 1; }
+    .actions { display: flex; align-items: center; gap: 3px; }
+    .btn { height: 38px; padding: 0 12px; border: 0; background: transparent; border-radius: 7px; color: #5f6368; cursor: pointer; }
+    .btn:hover { background: #f1f3f4; }
+    .count { color: #5f6368; font-size: 13px; margin-right: 6px; }
+    .crumb { display: flex; align-items: center; gap: 2px; color: #5f6368; font-size: 14px; margin: 4px 0 14px; min-height: 28px; }
+    
+    .drop { border: 1px dashed #c5d7f5; background: #f8fbff; border-radius: 12px; padding: 12px 16px; color: #5f6368; margin: 0 0 14px; text-align: left; transition: 0.2s; }
+    .drop.drag { background: #e8f0fe; border-color: #1a73e8; }
+    .drop b { color: #3c4043; margin-right: 6px; }
+    
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .card { background: #fff; border: 1px solid #dadce0; border-radius: 10px; min-height: 155px; padding: 14px; cursor: pointer; display: flex; flex-direction: column; transition: .12s; position: relative; overflow: hidden; }
+    .card:hover { background: #f8fafd; border-color: #c7c9cc; box-shadow: 0 1px 2px rgba(60,64,67,.18); }
+    .icon { font-size: 34px; margin: 4px 0 10px 1px; display: flex; align-items: center; justify-content: center; height: 60px; background: #f1f3f4; border-radius: 8px; }
+    .icon img, .icon video { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+    .name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #202124; margin-top: 4px; }
+    .meta { font-size: 12px; color: #5f6368; margin-top: 6px; }
+    .empty { padding: 90px 20px; text-align: center; color: #5f6368; }
+    
+    .modal { position: fixed; inset: 0; background: rgba(32,33,36,.75); display: none; z-index: 50; align-items: center; justify-content: center; }
+    .modal.open { display: flex; }
+    .viewer { background: #fff; width: min(1000px, 92vw); height: min(85vh, 750px); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 80px rgba(0,0,0,.4); }
+    .viewerBar { height: 56px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #fff; }
+    .viewerTitle { font-weight: 500; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; }
+    .viewerBody { flex: 1; background: #000; display: flex; align-items: center; justify-content: center; overflow: auto; position: relative; }
+    .viewerBody video, .viewerBody audio { max-width: 100%; max-height: 100%; outline: none; }
+    .viewerBody img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .viewerBody iframe { width: 100%; height: 100%; border: 0; background: #fff; }
+    
+    .toast { position: fixed; left: 24px; bottom: 24px; background: #202124; color: #fff; padding: 12px 20px; border-radius: 8px; display: none; z-index: 90; box-shadow: var(--shadow); font-weight: 500; }
+    .toast.show { display: block; }
+    .ctx { position: fixed; display: none; background: #fff; border-radius: 6px; box-shadow: 0 4px 16px rgba(60,64,67,.25); z-index: 80; padding: 6px 0; min-width: 180px; border: 1px solid var(--line); }
+    .ctx button { display: block; border: 0; background: #fff; width: 100%; text-align: left; padding: 10px 16px; cursor: pointer; color: #202124; font-size: 13px; }
+    .ctx button:hover { background: #f1f3f4; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logoMark">△</div><span>Cloud Drive</span></div>
+  <div class="search"><span>⌕</span><input id="search" placeholder="Tìm trong Drive..."></div>
+  <div class="headerBtns">
+    <button class="iconBtn" title="Tải lại" onclick="loadDriveFiles()">🔄</button>
+  </div>
+</header>
+
+<div class="app">
+  <aside>
+    <button class="new" id="uploadBtn"><span class="plus">＋</span> Tải tệp lên</button>
+    <input id="fileInput" type="file" multiple hidden>
+    <nav>
+      <button class="active" data-view="all">🗂️ Tất cả tệp</button>
+
+      <button data-view="video">🎬 Video & Audio</button>
+      <button data-view="image">🖼️ Hình ảnh</button>
+      <button data-view="document">📄 Tài liệu</button>
+    </nav>
+    <div class="storage">
+      <div class="storageTitle">🌐 Đám mây Cloud</div>
+      <div class="progress"><i></i></div>
+      <small>Lưu trữ vô hạn GB. Mọi người có link đều xem được video & file!</small>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topline">
+      <h1 id="title">Tất cả tệp</h1>
+      <div class="actions"><span class="count" id="count">0 mục</span></div>
+    </div>
+    <div class="drop" id="drop"><b>Kéo & thả file vào đây</b> hoặc bấm “Tải tệp lên” để lưu trữ đám mây.</div>
+    <section id="content"></section>
+  </main>
+</div>
+
+<!-- Modal Trình Xem Video / File -->
+<div class="modal" id="modal">
+  <div class="viewer">
+    <div class="viewerBar">
+      <div class="viewerTitle" id="viewerTitle"></div>
+      <button class="btn" id="copyLinkBtn">Copy Link</button>
+      <a class="btn" id="downloadBtn" target="_blank" download style="text-decoration:none;display:flex;align-items:center;">Tải xuống</a>
+      <button class="btn" id="closeBtn">Đóng</button>
+    </div>
+    <div class="viewerBody" id="viewerBody"></div>
+  </div>
+</div>
+
+<!-- Context Menu -->
+<div class="ctx" id="ctx">
+  <button id="ctxOpen">▶ Mở / Xem</button>
+  <button id="ctxCopy">📋 Copy Link Chia Sẻ</button>
+  <button id="ctxDownload">⬇️ Tải xuống</button>
+  <button id="ctxDelete" style="color:red">🗑️ Xóa tệp</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // 🔴 THÔNG TIN CẤU HÌNH GITHUB CỦA BẠN:
+  const GITHUB_CONFIG = {
+      token: "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",
+      owner: "TÊN_TÀI_KHOẢN_GITHUB_CỦA_BẠN", // Sửa thành Username GitHub của bạn
+      repo: "TÊN_REPOSITORY_CỦA_BẠN",             // Sửa thành Repo GitHub của bạn (Chế độ Public)
+      branch: "main"
+  };
+
+  let allFiles = [];
+  let currentView = 'all';
+  let activeFile = null;
+  let ctxFile = null;
+
+  const $ = id => document.getElementById(id);
+
+  function toast(msg) {
+    $('toast').textContent = msg; $('toast').classList.add('show');
+    clearTimeout(toast.t); toast.t = setTimeout(() => $('toast').classList.remove('show'), 2500);
+  }
+
+  function fmtSize(n) {
+    if (!n) return '0 B';
+    if (n < 1024) return n + ' B';
+    const u = ['KB', 'MB', 'GB', 'TB']; let i = -1;
+    do { n /= 1024; i++; } while (n >= 1024 && i < u.length - 1);
+    return n.toFixed(1) + ' ' + u[i];
+  }
+
+  // TẢI FILE LÊN CLOUD GITHUB
+  async function uploadFiles(files) {
+    for (const f of files) {
+      toast(`🚀 Đang tải lên: ${f.name}...`);
+      const cleanName = f.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const fileName = `${Date.now()}_${cleanName}`;
+      const path = `drive_storage/${fileName}`;
+      const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${path}`;
+
+      try {
+        const base64Content = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+          reader.readAsDataURL(f);
+        });
+
+        const res = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${GITHUB_CONFIG.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Upload file: ${fileName}`,
+            content: base64Content,
+            branch: GITHUB_CONFIG.branch
+          })
+        });
+
+        if (!res.ok) throw new Error('Lỗi upload file!');
+        toast(`✅ Đã tải lên: ${f.name}`);
+      } catch (err) {
+        alert('❌ Không thể tải file: ' + err.message);
+      }
+    }
+    loadDriveFiles();
+  }
+
+  // LẤY DANH SÁCH FILE TỪ ĐÁM MÂY
+  async function loadDriveFiles() {
+    $('content').innerHTML = '<div class="empty">🔄 Đang đồng bộ danh sách file từ đám mây...</div>';
+    const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/drive_storage`;
+
+    try {
+      const res = await fetch(url, {
+        headers: { 'Authorization': `token ${GITHUB_CONFIG.token}` }
+      });
+
+      if (res.status === 404) {
+        allFiles = [];
+        render();
+        return;
+      }
+
+      const data = await res.json();
+      allFiles = data.reverse();
+      render();
+    } catch (err) {
+      $('content').innerHTML = '<div class="empty" style="color:red">Không thể tải file! Vui lòng kiểm tra lại cấu hình Owner/Repo.</div>';
+    }
+  }
+
+  // HIỂN THỊ FILE VÀ PHÂN LOẠI
+  function render() {
+    let list = [...allFiles];
+    const q = $('search').value.trim().toLowerCase();
+
+    if (q) list = list.filter(x => x.name.toLowerCase().includes(q));
+
+    list = list.filter(x => {
+      const ext = x.name.split('.').pop().toLowerCase();
+      if (currentView === 'video') return ['mp4', 'mkv', 'webm', 'mov', 'mp3', 'wav', 'ogg'].includes(ext);
+      if (currentView === 'image') return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext);
+      if (currentView === 'document') return ['pdf', 'doc', 'docx', 'txt', 'zip', 'rar'].includes(ext);
+      return true;
+    });
+
+    $('count').textContent = `${list.length} mục`;
+
+    if (!list.length) {
+      $('content').innerHTML = '<div class="empty">Chưa có tệp nào ở đây.</div>';
+      return;
+    }
+
+    $('content').innerHTML = '<div class="grid">' + list.map(x => {
+      const cdnUrl = `https://cdn.jsdelivr.net/gh/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}@${GITHUB_CONFIG.branch}/${x.path}`;
+      const ext = x.name.split('.').pop().toLowerCase();
+      const rawName = x.name.substring(x.name.indexOf('_') + 1);
+
+      let iconHTML = '📦';
+      if (['mp4', 'webm', 'mov'].includes(ext)) {
+        iconHTML = `<video src="${cdnUrl}#t=0.5" preload="metadata"></video>`;
+      } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+        iconHTML = `<img src="${cdnUrl}" loading="lazy">`;
+      } else if (['mp3', 'wav', 'ogg'].includes(ext)) {
+        iconHTML = '🎵';
+      } else if (['pdf'].includes(ext)) {
+        iconHTML = '📕';
+      } else if (['doc', 'docx', 'txt'].includes(ext)) {
+        iconHTML = '📄';
+      }
+
+      return `
+        <div class="card" data-sha="${x.sha}" data-path="${x.path}" data-url="${cdnUrl}" data-name="${rawName}">
+          <div class="icon">${iconHTML}</div>
+          <div class="name" title="${rawName}">${rawName}</div>
+          <div class="meta">${fmtSize(x.size)} · Cloud</div>
+        </div>
+      `;
+    }).join('') + '</div>';
+
+    document.querySelectorAll('.card').forEach(c => {
+      c.addEventListener('dblclick', () => openViewer(c.dataset));
+      c.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        ctxFile = c.dataset;
+        showCtx(e.clientX, e.clientY);
+      });
+    });
+  }
+
+  // BỘ XEM TRỰC TIẾP VIDEO, ẢNH, ÂM THANH
+  function openViewer(file) {
+    activeFile = file;
+    $('viewerTitle').textContent = file.name;
+    $('downloadBtn').href = file.url;
+    $('viewerBody').innerHTML = '';
+
+    const ext = file.name.split('.').pop().toLowerCase();
+
+    // 🔴 FIX: TRÌNH PHÁT VIDEO VÀ ÂM THANH TRỰC TIẾP
+    if (['mp4', 'webm', 'mov'].includes(ext)) {
+      $('viewerBody').innerHTML = `<video src="${file.url}" controls autoplay></video>`;
+    } else if (['mp3', 'wav', 'ogg'].includes(ext)) {
+      $('viewerBody').innerHTML = `<div style="text-align:center;color:#fff;"><div style="font-size:70px;margin-bottom:20px;">🎵</div><audio src="${file.url}" controls autoplay></audio></div>`;
+    } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) {
+      $('viewerBody').innerHTML = `<img src="${file.url}" alt="">`;
+    } else if (['pdf'].includes(ext)) {
+      $('viewerBody').innerHTML = `<iframe src="${file.url}"></iframe>`;
+    } else {
+      $('viewerBody').innerHTML = `<div class="empty" style="color:#fff;">Không thể xem trước loại file này.<br><br><b>${file.name}</b><br><br>Vui lòng dùng nút "Tải xuống" để mở file.</div>`;
+    }
+
+    $('modal').classList.add('open');
+  }
+
+  // MENU CHUỘT PHẢI (CONTEXT MENU)
+  function showCtx(x, y) {
+    $('ctx').style.left = x + 'px';
+    $('ctx').style.top = y + 'px';
+    $('ctx').style.display = 'block';
+  }
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.ctx')) $('ctx').style.display = 'none';
+  });
+
+  $('ctxOpen').onclick = () => { $('ctx').style.display = 'none'; if (ctxFile) openViewer(ctxFile); };
+  $('ctxCopy').onclick = () => {
+    if (ctxFile) {
+      navigator.clipboard.writeText(ctxFile.url);
+      toast('📋 Đã sao chép link xem/tải file!');
+    }
+    $('ctx').style.display = 'none';
+  };
+  $('ctxDownload').onclick = () => {
+    if (ctxFile) window.open(ctxFile.url, '_blank');
+    $('ctx').style.display = 'none';
+  };
+  $('ctxDelete').onclick = async () => {
+    $('ctx').style.display = 'none';
+    if (ctxFile && confirm(`Xóa tệp "${ctxFile.name}" khỏi đám mây?`)) {
+      toast('🗑️ Đang xóa...');
+      const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${ctxFile.path}`;
+      await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `token ${GITHUB_CONFIG.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `Delete file: ${ctxFile.path}`,
+          sha: ctxFile.sha,
+          branch: GITHUB_CONFIG.branch
+        })
+      });
+      toast('Đã xóa tệp thành công');
+      loadDriveFiles();
+    }
+  };
+
+  // NÚT SỰ KIỆN TẢI FILE / DẢI ĐIỀU HƯỚNG
+  $('uploadBtn').onclick = () => $('fileInput').click();
+  $('fileInput').onchange = e => uploadFiles(e.target.files);
+  $('search').oninput = render;
+
+  $('copyLinkBtn').onclick = () => {
+    if (activeFile) {
+      navigator.clipboard.writeText(activeFile.url);
+      toast('📋 Đã copy link xem file công khai!');
+    }
+  };
+
+  document.querySelectorAll('nav button').forEach(b => {
+    b.onclick = () => {
+      currentView = b.dataset.view;
+      document.querySelectorAll('nav button').forEach(z => z.classList.remove('active'));
+      b.classList.add('active');
+      render();
+    };
+  });
+
+  // KÉO THẢ FILE
+  const dropZone = $('drop');
+  dropZone.ondragover = e => { e.preventDefault(); dropZone.classList.add('drag'); };
+  dropZone.ondragleave = () => dropZone.classList.remove('drag');
+  dropZone.ondrop = e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag');
+    uploadFiles(e.dataTransfer.files);
+  };
+
+  $('closeBtn').onclick = () => {
+    $('modal').classList.remove('open');
+    $('viewerBody').innerHTML = ''; // Dừng phát video/nhạc khi đóng modal
+  };
+
+  // KHỞI CHẠY LẦN ĐẦU
+  loadDriveFiles();
+</script>
+</body>
+</html>
