@@ -1,1473 +1,267 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>VietDrive</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f8fafd;
-      color: #202124;
-    }
-
-    header {
-      height: 72px;
-      display: flex;
-      align-items: center;
-      padding: 0 24px;
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-      gap: 25px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .logo {
-      font-size: 23px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .logo span {
-      color: #4285f4;
-    }
-
-    .search {
-      flex: 1;
-      max-width: 720px;
-      position: relative;
-    }
-
-    .search input {
-      width: 100%;
-      height: 45px;
-      border: none;
-      outline: none;
-      background: #f1f3f4;
-      border-radius: 24px;
-      padding: 0 20px;
-      font-size: 15px;
-    }
-
-    main {
-      padding: 25px;
-      max-width: 1500px;
-      margin: auto;
-    }
-
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 25px;
-    }
-
-    .title {
-      font-size: 25px;
-      font-weight: 700;
-    }
-
-    .upload-btn {
-      background: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 13px 22px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .upload-btn:hover {
-      background: #1557b0;
-    }
-
-    #fileInput {
-      display: none;
-    }
-
-    .dropzone {
-      border: 2px dashed #c7cbd1;
-      border-radius: 16px;
-      padding: 35px;
-      text-align: center;
-      background: white;
-      margin-bottom: 25px;
-      transition: .2s;
-    }
-
-    .dropzone.drag {
-      border-color: #1a73e8;
-      background: #eef5ff;
-    }
-
-    .dropzone strong {
-      display: block;
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-
-    .dropzone small {
-      color: #6b7280;
-    }
-
-    .storage-box {
-      background: white;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 25px;
-      border: 1px solid #e4e7eb;
-    }
-
-    .storage-top {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 9px;
-      font-size: 14px;
-    }
-
-    .bar {
-      height: 8px;
-      background: #e8eaed;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .bar div {
-      width: 0%;
-      height: 100%;
-      background: #1a73e8;
-      transition: .2s;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 18px;
-    }
-
-    .file-card {
-      background: white;
-      border: 1px solid #e3e7eb;
-      border-radius: 14px;
-      overflow: hidden;
-      transition: .2s;
-    }
-
-    .file-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0,0,0,.07);
-    }
-
-    .preview {
-      height: 180px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #f1f3f4;
-      overflow: hidden;
-    }
-
-    .preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .preview video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .preview iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-
-    .file-icon {
-      font-size: 58px;
-    }
-
-    .info {
-      padding: 14px;
-    }
-
-    .filename {
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 7px;
-    }
-
-    .meta {
-      color: #6b7280;
-      font-size: 13px;
-      margin-bottom: 13px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 7px;
-    }
-
-    .actions button {
-      flex: 1;
-      border: 0;
-      padding: 9px;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #f1f3f4;
-    }
-
-    .actions button:hover {
-      background: #e2e5e8;
-    }
-
-    .actions .download {
-      background: #1a73e8;
-      color: white;
-    }
-
-    .uploads {
-      margin-bottom: 25px;
-    }
-
-    .upload-item {
-      background: white;
-      border: 1px solid #e1e4e8;
-      border-radius: 12px;
-      padding: 13px;
-      margin-bottom: 10px;
-    }
-
-    .upload-name {
-      font-weight: 600;
-      margin-bottom: 8px;
-      word-break: break-all;
-    }
-
-    .upload-progress {
-      height: 7px;
-      background: #e8eaed;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .upload-progress div {
-      width: 0%;
-      height: 100%;
-      background: #34a853;
-      transition: .15s;
-    }
-
-    .upload-status {
-      margin-top: 7px;
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .empty {
-      text-align: center;
-      padding: 80px 20px;
-      color: #777;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.7);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-    }
-
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-box {
-      width: min(1100px, 100%);
-      max-height: 90vh;
-      background: white;
-      border-radius: 15px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .modal-content {
-      background: #111;
-      min-height: 70vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-content img,
-    .modal-content video {
-      max-width: 100%;
-      max-height: 80vh;
-    }
-
-    .modal-content iframe {
-      width: 100%;
-      height: 80vh;
-      border: 0;
-    }
-
-    .close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 40px;
-      height: 40px;
-      border: none;
-      border-radius: 50%;
-      background: rgba(0,0,0,.6);
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-      z-index: 5;
-    }
-
-    @media(max-width:700px) {
-      header {
-        padding: 0 12px;
-        gap: 10px;
-      }
-
-      .logo {
-        font-size: 18px;
-      }
-
-      main {
-        padding: 14px;
-      }
-
-      .top {
-        flex-direction: column;
-        align-items: stretch;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VietDrive — Firebase Drive</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:#f6f8fc;color:#202124}
+header{position:sticky;top:0;z-index:20;height:68px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:18px;padding:0 20px}
+.logo{font-weight:800;font-size:22px;white-space:nowrap}.logo span{color:#1a73e8}
+.search{flex:1;max-width:720px}.search input{width:100%;height:44px;border:0;border-radius:22px;background:#f1f3f4;padding:0 18px;outline:0}
+main{max-width:1500px;margin:auto;padding:22px}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}
+h1{font-size:25px;margin:0}.btn{border:0;border-radius:10px;padding:12px 17px;cursor:pointer;font-weight:700}
+.primary{background:#1a73e8;color:#fff}.ghost{background:#fff;border:1px solid #d9dde3}
+.drop{background:#fff;border:2px dashed #c8cdd4;border-radius:15px;padding:30px;text-align:center;margin-bottom:18px;transition:.15s}
+.drop.drag{border-color:#1a73e8;background:#eef5ff}
+.note{color:#6b7280;font-size:13px;margin-top:7px}
+.status{background:#fff;border:1px solid #e1e5ea;border-radius:12px;padding:12px;margin-bottom:18px;display:none}
+.status.show{display:block}.status.err{border-color:#f1b5b5;background:#fff5f5}
+.uploads{display:grid;gap:10px;margin-bottom:18px}
+.up{background:#fff;border:1px solid #e1e5ea;border-radius:12px;padding:12px}
+.up-top{display:flex;gap:10px;justify-content:space-between;align-items:center}
+.up-name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini{color:#6b7280;font-size:12px}.prog{height:7px;background:#edf0f2;border-radius:99px;overflow:hidden;margin-top:8px}.prog>div{height:100%;width:0;background:#34a853;transition:width .15s}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:16px}
+.card{background:#fff;border:1px solid #e2e6ea;border-radius:14px;overflow:hidden;min-width:0}
+.prev{height:175px;background:#eef1f4;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.prev img,.prev video{width:100%;height:100%;object-fit:cover}.prev iframe{width:100%;height:100%;border:0}.ico{font-size:55px}
+.body{padding:12px}.name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:12px;color:#6b7280;margin-top:6px}.acts{display:flex;gap:7px;margin-top:11px}.acts button{flex:1;border:0;border-radius:8px;padding:9px;cursor:pointer;background:#f1f3f4}.acts .dl{background:#1a73e8;color:#fff}
+.empty{text-align:center;color:#777;padding:65px 10px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;align-items:center;justify-content:center;padding:18px}.modal.on{display:flex}
+.box{width:min(1100px,100%);max-height:94vh;background:#111;border-radius:14px;overflow:hidden;position:relative}.close{position:absolute;right:10px;top:10px;width:40px;height:40px;border:0;border-radius:50%;background:#000a;color:#fff;font-size:22px;cursor:pointer;z-index:2}.content{min-height:70vh;display:flex;align-items:center;justify-content:center}.content img,.content video{max-width:100%;max-height:90vh}.content iframe{width:100%;height:88vh;border:0}
+@media(max-width:700px){header{padding:0 10px}.logo{font-size:18px}main{padding:12px}.row{align-items:stretch;flex-direction:column}}
+</style>
 </head>
-
 <body>
-
 <header>
-  <div class="logo">
-    <span>Viet</span>Drive
-  </div>
-
-  <div class="search">
-    <input
-      id="searchInput"
-      type="search"
-      placeholder="Tìm kiếm file..."
-    >
-  </div>
+  <div class="logo"><span>Viet</span>Drive</div>
+  <div class="search"><input id="q" placeholder="Tìm kiếm file..."></div>
 </header>
 
 <main>
-
-  <div class="top">
-    <div class="title">Tất cả tệp</div>
-
-    <label class="upload-btn">
-      + Tải tệp lên
-      <input id="fileInput" type="file" multiple>
+  <div class="row">
+    <h1>Tất cả tệp</h1>
+    <label class="btn primary">+ Tải lên
+      <input id="picker" type="file" multiple hidden>
     </label>
   </div>
 
-  <div
-    id="dropzone"
-    class="dropzone"
-  >
-    <strong>Kéo & thả file vào đây</strong>
-    <small>
-      Hoặc click nút “Tải tệp lên” để chọn nhiều file
-    </small>
+  <div id="drop" class="drop">
+    <b>Kéo & thả file vào đây</b>
+    <div class="note">File sẽ xuất hiện ngay trên giao diện, sau đó upload nền lên Firebase.</div>
   </div>
 
-  <div class="storage-box">
-
-    <div class="storage-top">
-      <span>Dung lượng đang sử dụng</span>
-      <span id="storageText">0 B</span>
-    </div>
-
-    <div class="bar">
-      <div id="storageBar"></div>
-    </div>
-
-  </div>
-
+  <div id="status" class="status"></div>
   <div id="uploads" class="uploads"></div>
-
-  <div id="fileGrid" class="grid"></div>
-
-  <div id="empty" class="empty">
-    Chưa có file nào.
-  </div>
-
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty">Chưa có file nào.</div>
 </main>
 
 <div id="modal" class="modal">
-
-  <div class="modal-box">
-
-    <button
-      class="close"
-      onclick="closePreview()"
-    >
-      ×
-    </button>
-
-    <div
-      id="modalContent"
-      class="modal-content"
-    ></div>
-
+  <div class="box">
+    <button id="close" class="close">×</button>
+    <div id="content" class="content"></div>
   </div>
-
 </div>
 
 <script type="module">
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
+  getStorage, ref as sRef, uploadBytesResumable, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
 import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
-
-import {
-  getDatabase,
-  ref as dbRef,
-  push,
-  onValue
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
-
-/* =========================
-   FIREBASE CONFIG
-========================= */
+  getDatabase, ref as dRef, push, set, onValue
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
 
 const firebaseConfig = {
-
-  apiKey:
-    "AIzaSyCDQsJ_NrGK5ouRLS7vFr55OBZQ0nKhHSk",
-
-  authDomain:
-    "vietnam-life-game.firebaseapp.com",
-
-  databaseURL:
-    "https://vietnam-life-game-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-  projectId:
-    "vietnam-life-game",
-
-  storageBucket:
-    "vietnam-life-game.firebasestorage.app",
-
-  messagingSenderId:
-    "134954120781",
-
-  appId:
-    "1:134954120781:web:d7f762adb80bfce3140e04",
-
-  measurementId:
-    "G-39VPPE1F9T"
-
+  apiKey:"AIzaSyCDQsJ_NrGK5ouRLS7vFr55OBZQ0nKhHSk",
+  authDomain:"vietnam-life-game.firebaseapp.com",
+  databaseURL:"https://vietnam-life-game-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"vietnam-life-game",
+  storageBucket:"vietnam-life-game.firebasestorage.app",
+  messagingSenderId:"134954120781",
+  appId:"1:134954120781:web:d7f762adb80bfce3140e04",
+  measurementId:"G-39VPPE1F9T"
 };
 
+const app=initializeApp(firebaseConfig);
+const storage=getStorage(app);
+const db=getDatabase(app);
 
-/* =========================
-   FIREBASE
-========================= */
+const picker=document.getElementById('picker');
+const drop=document.getElementById('drop');
+const q=document.getElementById('q');
+const grid=document.getElementById('grid');
+const empty=document.getElementById('empty');
+const uploads=document.getElementById('uploads');
+const statusBox=document.getElementById('status');
 
-const app = initializeApp(firebaseConfig);
+let files=[];
+const localPreviews=new Map();
 
-const storage = getStorage(app);
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const bytes=n=>{
+  n=Number(n)||0;if(!n)return'0 B';
+  const u=['B','KB','MB','GB','TB','PB'];const i=Math.min(u.length-1,Math.floor(Math.log(n)/Math.log(1024)));
+  return `${(n/Math.pow(1024,i)).toFixed(i?2:0)} ${u[i]}`;
+};
+const date=t=>t?new Date(t).toLocaleString('vi-VN'):'';
+const icon=t=>{
+  if((t||'').startsWith('image/'))return'🖼️';
+  if((t||'').startsWith('video/'))return'🎬';
+  if((t||'').startsWith('audio/'))return'🎵';
+  if((t||'').includes('pdf'))return'📕';
+  if((t||'').includes('zip')||(t||'').includes('rar')||(t||'').includes('7z'))return'🗜️';
+  return'📄';
+};
 
-const db = getDatabase(app);
+function setStatus(msg,err=false){
+  statusBox.textContent=msg;
+  statusBox.className='status show'+(err?' err':'');
+}
+function clearStatus(){statusBox.className='status';statusBox.textContent=''}
 
-
-/* =========================
-   DOM
-========================= */
-
-const fileInput =
-  document.getElementById("fileInput");
-
-const dropzone =
-  document.getElementById("dropzone");
-
-const fileGrid =
-  document.getElementById("fileGrid");
-
-const empty =
-  document.getElementById("empty");
-
-const searchInput =
-  document.getElementById("searchInput");
-
-const uploads =
-  document.getElementById("uploads");
-
-const storageText =
-  document.getElementById("storageText");
-
-const storageBar =
-  document.getElementById("storageBar");
-
-
-let allFiles = [];
-
-
-/* =========================
-   FILE SIZE
-========================= */
-
-function formatBytes(bytes) {
-
-  if (!bytes) return "0 B";
-
-  const units = [
-    "B",
-    "KB",
-    "MB",
-    "GB",
-    "TB",
-    "PB"
-  ];
-
-  const index =
-    Math.floor(
-      Math.log(bytes) /
-      Math.log(1024)
-    );
-
-  return (
-    parseFloat(
-      (bytes /
-        Math.pow(1024, index))
-        .toFixed(2)
-    ) +
-    " " +
-    units[index]
-  );
+function preview(file){
+  const p=document.createElement('div');p.className='prev';
+  const t=file.contentType||file.type||'';
+  const url=file.url||localPreviews.get(file.id);
+  if(t.startsWith('image/') && url){
+    const x=document.createElement('img');x.src=url;x.loading='lazy';p.appendChild(x);
+  }else if(t.startsWith('video/') && url){
+    const x=document.createElement('video');x.src=url;x.controls=true;x.preload='metadata';p.appendChild(x);
+  }else if(t==='application/pdf' && url){
+    const x=document.createElement('iframe');x.src=url;p.appendChild(x);
+  }else{
+    const x=document.createElement('div');x.className='ico';x.textContent=icon(t);p.appendChild(x);
+  }
+  return p;
 }
 
-
-/* =========================
-   DATE
-========================= */
-
-function formatDate(timestamp) {
-
-  if (!timestamp) return "";
-
-  return new Date(timestamp)
-    .toLocaleString(
-      "vi-VN"
-    );
-
+function card(f){
+  const c=document.createElement('div');c.className='card';
+  c.appendChild(preview(f));
+  const b=document.createElement('div');b.className='body';
+  b.innerHTML=`<div class="name" title="${esc(f.name)}">${esc(f.name)}</div>
+  <div class="meta">${bytes(f.size)}${f.createdAt?' • '+esc(date(f.createdAt)):''}${f.uploading?' • đang tải...':''}</div>`;
+  const a=document.createElement('div');a.className='acts';
+  const view=document.createElement('button');view.textContent='Xem';view.onclick=()=>openPreview(f);
+  const copy=document.createElement('button');copy.textContent='🔗';copy.title='Copy link';copy.disabled=!f.url;
+  copy.onclick=async()=>{try{await navigator.clipboard.writeText(f.url);copy.textContent='✓';setTimeout(()=>copy.textContent='🔗',900)}catch{}};
+  const dl=document.createElement('button');dl.textContent='Tải xuống';dl.className='dl';dl.disabled=!f.url;
+  dl.onclick=()=>{const a=document.createElement('a');a.href=f.url;a.target='_blank';a.download=f.name;document.body.appendChild(a);a.click();a.remove()};
+  a.append(view,copy,dl);b.appendChild(a);c.appendChild(b);return c;
 }
 
-
-/* =========================
-   GET FILE ICON
-========================= */
-
-function getIcon(type) {
-
-  if (!type)
-    return "📄";
-
-  if (type.startsWith("image/"))
-    return "🖼️";
-
-  if (type.startsWith("video/"))
-    return "🎬";
-
-  if (type.startsWith("audio/"))
-    return "🎵";
-
-  if (type.includes("pdf"))
-    return "📕";
-
-  if (
-    type.includes("zip") ||
-    type.includes("rar") ||
-    type.includes("7z")
-  )
-    return "🗜️";
-
-  if (
-    type.includes("text") ||
-    type.includes("javascript") ||
-    type.includes("json")
-  )
-    return "📄";
-
-  return "📁";
+function render(){
+  const term=q.value.trim().toLowerCase();
+  grid.innerHTML='';
+  const list=files.filter(f=>f.name.toLowerCase().includes(term))
+                 .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  empty.style.display=list.length?'none':'block';
+  list.forEach(f=>grid.appendChild(card(f)));
 }
 
-
-/* =========================
-   PREVIEW
-========================= */
-
-function makePreview(file) {
-
-  const wrapper =
-    document.createElement("div");
-
-  wrapper.className =
-    "preview";
-
-  const type =
-    file.contentType || "";
-
-  if (
-    type.startsWith("image/")
-  ) {
-
-    const img =
-      document.createElement("img");
-
-    img.src =
-      file.url;
-
-    img.loading =
-      "lazy";
-
-    wrapper.appendChild(img);
-
-  }
-
-  else if (
-    type.startsWith("video/")
-  ) {
-
-    const video =
-      document.createElement("video");
-
-    video.src =
-      file.url;
-
-    video.controls =
-      true;
-
-    video.preload =
-      "metadata";
-
-    wrapper.appendChild(video);
-
-  }
-
-  else if (
-    type === "application/pdf"
-  ) {
-
-    const iframe =
-      document.createElement("iframe");
-
-    iframe.src =
-      file.url;
-
-    wrapper.appendChild(iframe);
-
-  }
-
-  else {
-
-    const icon =
-      document.createElement("div");
-
-    icon.className =
-      "file-icon";
-
-    icon.textContent =
-      getIcon(type);
-
-    wrapper.appendChild(icon);
-
-  }
-
-  return wrapper;
-}
-
-
-/* =========================
-   CREATE CARD
-========================= */
-
-function createCard(file) {
-
-  const card =
-    document.createElement("div");
-
-  card.className =
-    "file-card";
-
-
-  card.appendChild(
-    makePreview(file)
-  );
-
-
-  const info =
-    document.createElement("div");
-
-  info.className =
-    "info";
-
-
-  const name =
-    document.createElement("div");
-
-  name.className =
-    "filename";
-
-  name.title =
-    file.name;
-
-  name.textContent =
-    file.name;
-
-
-  const meta =
-    document.createElement("div");
-
-  meta.className =
-    "meta";
-
-  meta.textContent =
-    `${formatBytes(file.size)} • ${formatDate(file.createdAt)}`;
-
-
-  const actions =
-    document.createElement("div");
-
-  actions.className =
-    "actions";
-
-
-  const open =
-    document.createElement("button");
-
-  open.textContent =
-    "Xem";
-
-  open.onclick =
-    () => openPreview(file);
-
-
-  const copy =
-    document.createElement("button");
-
-  copy.textContent =
-    "🔗";
-
-  copy.title =
-    "Copy link";
-
-  copy.onclick =
-    async () => {
-
-      await navigator.clipboard
-        .writeText(file.url);
-
-      copy.textContent =
-        "✓";
-
-      setTimeout(() => {
-
-        copy.textContent =
-          "🔗";
-
-      }, 1200);
-
-    };
-
-
-  const download =
-    document.createElement("button");
-
-  download.className =
-    "download";
-
-  download.textContent =
-    "Tải xuống";
-
-  download.onclick =
-    () => {
-
-      const a =
-        document.createElement("a");
-
-      a.href =
-        file.url;
-
-      a.target =
-        "_blank";
-
-      a.download =
-        file.name;
-
-      document.body.appendChild(a);
-
-      a.click();
-
-      a.remove();
-
-    };
-
-
-  actions.appendChild(open);
-
-  actions.appendChild(copy);
-
-  actions.appendChild(download);
-
-
-  info.appendChild(name);
-
-  info.appendChild(meta);
-
-  info.appendChild(actions);
-
-
-  card.appendChild(info);
-
-
-  return card;
-}
-
-
-/* =========================
-   RENDER
-========================= */
-
-function renderFiles() {
-
-  const keyword =
-    searchInput.value
-      .toLowerCase()
-      .trim();
-
-
-  fileGrid.innerHTML =
-    "";
-
-
-  let filtered =
-    allFiles.filter(file =>
-      file.name
-        .toLowerCase()
-        .includes(keyword)
-    );
-
-
-  filtered.sort(
-    (a,b) =>
-      (b.createdAt || 0) -
-      (a.createdAt || 0)
-  );
-
-
-  empty.style.display =
-    filtered.length
-      ? "none"
-      : "block";
-
-
-  for (
-    const file of filtered
-  ) {
-
-    fileGrid.appendChild(
-      createCard(file)
-    );
-
-  }
-
-
-  const totalSize =
-    allFiles.reduce(
-      (sum, file) =>
-        sum +
-        Number(file.size || 0),
-      0
-    );
-
-
-  storageText.textContent =
-    formatBytes(totalSize);
-
-
-  /*
-    Đây chỉ là thanh hiển thị
-    dung lượng cục bộ.
-    Nó không phải giới hạn Firebase.
-  */
-
-  const fakeLimit =
-    10 * 1024 * 1024 * 1024;
-
-  const percent =
-    Math.min(
-      100,
-      totalSize /
-      fakeLimit *
-      100
-    );
-
-  storageBar.style.width =
-    percent + "%";
-
-}
-
-
-/* =========================
-   REALTIME FILE LIST
-========================= */
-
-const filesRef =
-  dbRef(db, "files");
-
-
-onValue(
-  filesRef,
-  snapshot => {
-
-    const data =
-      snapshot.val() || {};
-
-
-    allFiles =
-      Object.entries(data)
-        .map(([id, file]) => ({
-          id,
-          ...file
-        }));
-
-
-    renderFiles();
-
-  }
-);
-
-
-/* =========================
-   UPLOAD
-========================= */
-
-async function uploadFile(file) {
-
-  const item =
-    document.createElement("div");
-
-  item.className =
-    "upload-item";
-
-
-  item.innerHTML = `
-
-    <div class="upload-name">
-      ${escapeHtml(file.name)}
-    </div>
-
-    <div class="upload-progress">
-      <div></div>
-    </div>
-
-    <div class="upload-status">
-      Chuẩn bị...
-    </div>
-
-  `;
-
-
-  uploads.prepend(item);
-
-
-  const progressBar =
-    item.querySelector(
-      ".upload-progress div"
-    );
-
-
-  const status =
-    item.querySelector(
-      ".upload-status"
-    );
-
-
-  const safeName =
-    createSafeFilename(
-      file.name
-    );
-
-
-  /*
-    Tạo đường dẫn riêng,
-    tránh trùng tên file.
-  */
-
-  const path =
-    "uploads/" +
-    Date.now() +
-    "_" +
-    crypto.randomUUID() +
-    "_" +
-    safeName;
-
-
-  const storageRef =
-    ref(
-      storage,
-      path
-    );
-
-
-  const task =
-    uploadBytesResumable(
-      storageRef,
-      file,
-      {
-        contentType:
-          file.type ||
-          "application/octet-stream",
-
-        cacheControl:
-          "public,max-age=31536000,immutable"
-      }
-    );
-
-
-  task.on(
-
-    "state_changed",
-
-    snapshot => {
-
-      const percent =
-        (
-          snapshot.bytesTransferred /
-          snapshot.totalBytes *
-          100
-        ).toFixed(1);
-
-
-      progressBar.style.width =
-        percent + "%";
-
-
-      status.textContent =
-        `Đang tải ${percent}%`;
-
+async function upload(file){
+  const id='local_'+crypto.randomUUID();
+  localPreviews.set(id,URL.createObjectURL(file));
+
+  // HIỆN FILE NGAY LẬP TỨC
+  files.unshift({id,name:file.name,size:file.size,type:file.type,contentType:file.type,url:null,createdAt:Date.now(),uploading:true});
+  render();
+
+  const row=document.createElement('div');row.className='up';
+  row.innerHTML=`<div class="up-top"><div class="up-name">${esc(file.name)}</div><div class="mini">${bytes(file.size)}</div></div>
+  <div class="prog"><div></div></div><div class="mini st">0%</div>`;
+  uploads.prepend(row);
+  const bar=row.querySelector('.prog>div'),st=row.querySelector('.st');
+
+  const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,170);
+  const path=`uploads/${new Date().toISOString().slice(0,10)}/${crypto.randomUUID()}_${safe}`;
+  const sr=sRef(storage,path);
+  const task=uploadBytesResumable(sr,file,{
+    contentType:file.type||'application/octet-stream',
+    cacheControl:'public,max-age=31536000,immutable'
+  });
+
+  task.on('state_changed',
+    snap=>{
+      const p=snap.totalBytes?Math.round(snap.bytesTransferred/snap.totalBytes*100):0;
+      bar.style.width=p+'%';st.textContent=`${p}%`;
     },
-
-    error => {
-
-      console.error(error);
-
-      status.textContent =
-        "❌ Upload lỗi: " +
-        error.message;
-
-      progressBar.style.background =
-        "#d93025";
-
+    err=>{
+      console.error(err);
+      st.textContent=`LỖI: ${err.code||err.message}`;
+      bar.style.background='#d93025';
+      const i=files.findIndex(x=>x.id===id);if(i>=0){files[i].uploading=false;files[i].error=err.code||err.message}
+      render();
+      setStatus(`Upload "${file.name}" thất bại: ${err.code||err.message}. Kiểm tra Storage Rules/Billing.`,true);
     },
+    async()=>{
+      try{
+        st.textContent='Đang tạo link...';
+        const url=await getDownloadURL(task.snapshot.ref);
+        const obj={name:file.name,size:file.size,contentType:file.type||'application/octet-stream',url,storagePath:path,createdAt:Date.now()};
 
-    async () => {
+        // GHI METADATA BỀN VỮNG
+        const newRef=push(dRef(db,'files'));
+        await set(newRef,obj);
 
-      try {
+        const i=files.findIndex(x=>x.id===id);
+        if(i>=0)files[i]={id:newRef.key,...obj,uploading:false};
+        localPreviews.delete(id);
+        URL.revokeObjectURL(localPreviews.get(id)||'');
+        render();
 
-        status.textContent =
-          "Đang tạo link...";
-
-
-        const url =
-          await getDownloadURL(
-            task.snapshot.ref
-          );
-
-
-        /*
-          Lưu metadata vào RTDB
-        */
-
-        await push(
-          dbRef(db, "files"),
-          {
-
-            name:
-              file.name,
-
-            size:
-              file.size,
-
-            contentType:
-              file.type ||
-              "application/octet-stream",
-
-            url:
-              url,
-
-            storagePath:
-              path,
-
-            createdAt:
-              Date.now()
-
-          }
-        );
-
-
-        progressBar.style.width =
-          "100%";
-
-
-        status.textContent =
-          "✅ Upload thành công";
-
-
-        setTimeout(
-          () => item.remove(),
-          2500
-        );
-
+        st.textContent='✅ Đã lưu';
+        bar.style.width='100%';
+        clearStatus();
+        setTimeout(()=>row.remove(),1800);
+      }catch(err){
+        console.error(err);
+        st.textContent=`LỖI lưu danh sách: ${err.code||err.message}`;
+        bar.style.background='#d93025';
+        setStatus(`File đã upload lên Storage nhưng không ghi được danh sách Realtime Database: ${err.code||err.message}.`,true);
       }
-
-      catch(error) {
-
-        console.error(error);
-
-        status.textContent =
-          "❌ Không lưu được metadata";
-
-      }
-
-    }
-
-  );
-
-}
-
-
-/* =========================
-   MULTI UPLOAD
-========================= */
-
-function uploadFiles(files) {
-
-  if (!files || !files.length)
-    return;
-
-  /*
-    Upload song song.
-    Firebase tự quản lý từng task.
-  */
-
-  [...files].forEach(
-    file => uploadFile(file)
-  );
-
-}
-
-
-/* =========================
-   FILE INPUT
-========================= */
-
-fileInput.addEventListener(
-  "change",
-  e => {
-
-    uploadFiles(
-      e.target.files
-    );
-
-    fileInput.value =
-      "";
-
-  }
-);
-
-
-/* =========================
-   DRAG DROP
-========================= */
-
-dropzone.addEventListener(
-  "dragover",
-  e => {
-
-    e.preventDefault();
-
-    dropzone.classList.add(
-      "drag"
-    );
-
-  }
-);
-
-
-dropzone.addEventListener(
-  "dragleave",
-  () => {
-
-    dropzone.classList.remove(
-      "drag"
-    );
-
-  }
-);
-
-
-dropzone.addEventListener(
-  "drop",
-  e => {
-
-    e.preventDefault();
-
-    dropzone.classList.remove(
-      "drag"
-    );
-
-    uploadFiles(
-      e.dataTransfer.files
-    );
-
-  }
-);
-
-
-/* =========================
-   SEARCH
-========================= */
-
-searchInput.addEventListener(
-  "input",
-  renderFiles
-);
-
-
-/* =========================
-   PREVIEW MODAL
-========================= */
-
-function openPreview(file) {
-
-  const modal =
-    document.getElementById(
-      "modal"
-    );
-
-  const content =
-    document.getElementById(
-      "modalContent"
-    );
-
-
-  content.innerHTML =
-    "";
-
-
-  const type =
-    file.contentType || "";
-
-
-  if (
-    type.startsWith("image/")
-  ) {
-
-    const img =
-      document.createElement("img");
-
-    img.src =
-      file.url;
-
-    img.alt =
-      file.name;
-
-    content.appendChild(img);
-
-  }
-
-  else if (
-    type.startsWith("video/")
-  ) {
-
-    const video =
-      document.createElement("video");
-
-    video.src =
-      file.url;
-
-    video.controls =
-      true;
-
-    video.autoplay =
-      true;
-
-    content.appendChild(video);
-
-  }
-
-  else if (
-    type === "application/pdf"
-  ) {
-
-    const iframe =
-      document.createElement("iframe");
-
-    iframe.src =
-      file.url;
-
-    content.appendChild(iframe);
-
-  }
-
-  else {
-
-    const link =
-      document.createElement("a");
-
-    link.href =
-      file.url;
-
-    link.target =
-      "_blank";
-
-    link.textContent =
-      "Mở file";
-
-    link.style.color =
-      "white";
-
-    link.style.fontSize =
-      "24px";
-
-    content.appendChild(link);
-
-  }
-
-
-  modal.classList.add(
-    "active"
-  );
-
-}
-
-
-window.closePreview =
-  function() {
-
-    const modal =
-      document.getElementById(
-        "modal"
-      );
-
-    const content =
-      document.getElementById(
-        "modalContent"
-      );
-
-
-    modal.classList.remove(
-      "active"
-    );
-
-    content.innerHTML =
-      "";
-
-  };
-
-
-document
-  .getElementById("modal")
-  .addEventListener(
-    "click",
-    e => {
-
-      if (
-        e.target.id ===
-        "modal"
-      ) {
-
-        closePreview();
-
-      }
-
     }
   );
-
-
-/* =========================
-   SECURITY HELPERS
-========================= */
-
-function escapeHtml(text) {
-
-  const div =
-    document.createElement(
-      "div"
-    );
-
-  div.textContent =
-    text;
-
-  return div.innerHTML;
-
 }
 
+picker.addEventListener('change',e=>{[...e.target.files].forEach(upload);picker.value=''});
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag')});
+drop.addEventListener('dragleave',()=>drop.classList.remove('drag'));
+drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('drag');[...e.dataTransfer.files].forEach(upload)});
+q.addEventListener('input',render);
 
-function createSafeFilename(name) {
+onValue(dRef(db,'files'),snap=>{
+  const data=snap.val()||{};
+  const remote=Object.entries(data).map(([id,v])=>({id,...v}));
+  const uploading=files.filter(f=>f.uploading);
+  files=[...uploading,...remote];
+  render();
+},err=>{
+  console.error(err);
+  setStatus(`Không đọc được danh sách: ${err.code||err.message}. Kiểm tra Realtime Database Rules.`,true);
+});
 
-  return name
-    .replace(
-      /[^a-zA-Z0-9._-]/g,
-      "_"
-    )
-    .slice(
-      0,
-      180
-    );
-
+function openPreview(f){
+  const modal=document.getElementById('modal'),content=document.getElementById('content');
+  content.innerHTML='';
+  const url=f.url||localPreviews.get(f.id);
+  const t=f.contentType||f.type||'';
+  if(!url){content.innerHTML='<div style="color:white;padding:40px">File chưa upload xong.</div>'}
+  else if(t.startsWith('image/')){const x=document.createElement('img');x.src=url;content.appendChild(x)}
+  else if(t.startsWith('video/')){const x=document.createElement('video');x.src=url;x.controls=true;x.autoplay=true;content.appendChild(x)}
+  else if(t==='application/pdf'){const x=document.createElement('iframe');x.src=url;content.appendChild(x)}
+  else{const a=document.createElement('a');a.href=url;a.target='_blank';a.textContent='Mở file';a.style.color='#fff';a.style.fontSize='25px';content.appendChild(a)}
+  modal.classList.add('on');
 }
+document.getElementById('close').onclick=()=>document.getElementById('modal').classList.remove('on');
+document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('on')};
 
-
-/* =========================
-   INITIAL
-========================= */
-
-renderFiles();
-
+render();
 </script>
-
 </body>
 </html>
