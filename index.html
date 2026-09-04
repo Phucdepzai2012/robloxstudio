@@ -1,194 +1,42 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Temporary Drive — P2P</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Room Drive</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,system-ui,sans-serif;background:#f6f8fc;color:#202124}
-header{height:64px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:14px;padding:0 20px;position:sticky;top:0;z-index:5}
-.logo{font-weight:800;font-size:21px;color:#1a73e8}.sub{font-size:12px;color:#6b7280}
-main{max-width:1100px;margin:auto;padding:20px}
-.panel{background:#fff;border:1px solid #e1e5ea;border-radius:14px;padding:16px;margin-bottom:15px}
-.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
-button,input{font:inherit}.btn{border:0;border-radius:10px;padding:11px 15px;cursor:pointer}.primary{background:#1a73e8;color:#fff}.gray{background:#eef1f5}.red{background:#fce8e6;color:#b3261e}
-input{padding:11px;border:1px solid #d7dce2;border-radius:9px;outline:0}
-.room{font-weight:800;letter-spacing:2px;background:#f1f3f4;padding:11px 14px;border-radius:9px}
-.drop{border:2px dashed #b8cdf3;background:#f8fbff;border-radius:14px;padding:35px;text-align:center;cursor:pointer}
-.drop.drag{background:#e8f0fe;border-color:#1a73e8}
-.status{font-size:13px;color:#5f6368;margin-top:10px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.card{background:#fff;border:1px solid #e1e5ea;border-radius:12px;padding:11px;min-width:0}
-.preview{height:145px;background:#eef1f4;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.preview img,.preview video{width:100%;height:100%;object-fit:cover}.ico{font-size:50px}
-.name{font-weight:700;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:12px;color:#6b7280;margin-top:5px}
-.actions{display:flex;gap:6px;margin-top:10px}.actions .btn{flex:1;text-decoration:none;text-align:center}
-.progress{height:7px;background:#e8eaed;border-radius:99px;overflow:hidden;margin-top:7px}.progress i{width:0;height:100%;display:block;background:#34a853}
-.queue{display:grid;gap:8px}.upload{border:1px solid #e1e5ea;background:#fff;border-radius:10px;padding:9px}.small{font-size:12px;color:#6b7280}
-.empty{text-align:center;color:#777;padding:45px}
-.hidden{display:none}
-@media(max-width:650px){main{padding:10px}.row{align-items:stretch}.row>*{width:100%}}
-</style>
-</head>
-<body>
-<header>
-  <div class="logo">☁ Temporary Drive</div>
-  <div class="sub">P2P • không Firebase Storage • không lưu cloud</div>
-</header>
-
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#202124}
+header{height:64px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 20px;font-size:21px;font-weight:800;color:#1a73e8}
+main{max-width:1050px;margin:24px auto;padding:0 14px}.panel{background:#fff;border:1px solid #e1e5ea;border-radius:14px;padding:18px;margin-bottom:15px}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+input,button{font:inherit}input{border:1px solid #d3d8df;border-radius:9px;padding:12px;outline:0;min-width:250px}button{border:0;border-radius:9px;padding:12px 17px;cursor:pointer;font-weight:700}.blue{background:#1a73e8;color:#fff}.gray{background:#eef1f5}
+.badge{font-weight:800;letter-spacing:2px;background:#f1f3f4;padding:10px 13px;border-radius:9px}.small{font-size:12px;color:#6b7280;line-height:1.5}.status{font-size:13px;color:#5f6368;margin-top:9px}
+.drop{border:2px dashed #b8cdf3;background:#f8fbff;padding:36px;text-align:center;border-radius:14px;cursor:pointer}.drop.drag{background:#e8f0fe;border-color:#1a73e8}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.card{background:#fff;border:1px solid #e1e5ea;border-radius:12px;padding:11px}.preview{height:145px;background:#eef1f4;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}.preview img,.preview video{width:100%;height:100%;object-fit:cover}.preview iframe{width:100%;height:100%;border:0}.ico{font-size:50px}
+.name{font-weight:700;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:12px;color:#6b7280;margin-top:5px}.actions{display:flex;gap:6px;margin-top:10px}.actions>*{flex:1;text-align:center;text-decoration:none}.empty{text-align:center;color:#777;padding:55px}.hidden{display:none!important}
+</style></head><body>
+<header>☁ Room Drive</header>
 <main>
-  <div class="panel">
-    <div class="row">
-      <button id="hostBtn" class="btn primary">Tạo phòng</button>
-      <input id="roomInput" placeholder="Nhập mã phòng">
-      <button id="joinBtn" class="btn gray">Vào phòng</button>
-      <span id="roomCode" class="room hidden"></span>
-      <button id="copyBtn" class="btn gray hidden">Copy mã</button>
-    </div>
-    <div id="status" class="status">Chưa kết nối.</div>
-  </div>
-
-  <div id="drivePanel" class="panel hidden">
-    <div id="drop" class="drop">
-      <b>Kéo & thả file vào đây</b><br>
-      <span class="small">hoặc bấm để chọn file</span>
-      <input id="picker" type="file" multiple hidden>
-    </div>
-    <div class="small" style="margin-top:9px">
-      File được truyền trực tiếp giữa các máy. <b>Host phải còn mở trang</b> để giữ phòng và file tạm thời.
-    </div>
-  </div>
-
-  <div id="queue" class="queue"></div>
-  <div id="grid" class="grid"></div>
-  <div id="empty" class="empty">Tạo hoặc vào phòng để bắt đầu.</div>
+<div class="panel"><div class="row"><input id="room" maxlength="32" placeholder="Nhập mã phòng, VD: ABC123"><button id="enter" class="blue">Vào phòng</button><span id="badge" class="badge hidden"></span></div><div class="small" style="margin-top:9px">Chỉ nhập mã phòng. Kho phía sau được cấu hình sẵn.</div></div>
+<div id="roomUI" class="hidden">
+<div class="panel"><div id="drop" class="drop"><b>📤 Chọn hoặc kéo thả file</b><br><span class="small">File sẽ được lưu lâu dài vào phòng và người khác cùng mã phòng sẽ thấy.</span><input id="picker" type="file" multiple hidden></div><div id="status" class="status"></div></div>
+<div id="grid" class="grid"></div><div id="empty" class="empty">Đang tải file...</div></div>
 </main>
-
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
-let peer=null, room=null, isHost=false;
-const connections=new Map();
-const files=new Map();
-const incoming=new Map();
-
+// Chỉ người quản trị sửa dòng này. Người dùng cuối chỉ nhập mã phòng.
+const API_BASE="YOUR_BACKEND_URL";
+let room="",files=[];
 const $=id=>document.getElementById(id);
-const esc=s=>String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-const fmt=n=>{if(!n)return"0 B";const u=["B","KB","MB","GB","TB"];let i=Math.min(4,Math.floor(Math.log(n)/Math.log(1024)));return(n/1024**i).toFixed(i?1:0)+" "+u[i]};
-
-function status(t){$("status").textContent=t}
-function setRoomUI(){ $("roomCode").textContent=room;$("roomCode").classList.remove("hidden");$("copyBtn").classList.remove("hidden");$("drivePanel").classList.remove("hidden");$("empty").classList.add("hidden") }
-
-function makeCard(f){
-  const c=document.createElement("div");c.className="card";
-  const p=document.createElement("div");p.className="preview";
-  if((f.type||"").startsWith("image/")){const i=document.createElement("img");i.src=f.url;i.loading="lazy";p.appendChild(i)}
-  else if((f.type||"").startsWith("video/")){const v=document.createElement("video");v.src=f.url;v.controls=true;v.preload="metadata";p.appendChild(v)}
-  else p.innerHTML="<div class='ico'>📄</div>";
-  const n=document.createElement("div");n.className="name";n.title=f.name;n.textContent=f.name;
-  const m=document.createElement("div");m.className="meta";m.textContent=fmt(f.size);
-  const a=document.createElement("div");a.className="actions";
-  const d=document.createElement("a");d.className="btn primary";d.textContent="Tải";d.href=f.url;d.download=f.name;d.target="_blank";
-  const cp=document.createElement("button");cp.className="btn gray";cp.textContent="Copy";cp.onclick=async()=>{try{await navigator.clipboard.writeText(f.url);cp.textContent="✓"}catch{}setTimeout(()=>cp.textContent="Copy",1000)};
-  a.append(d,cp);c.append(p,n,m,a);return c
-}
-function showFile(f){ if(files.has(f.id))return; files.set(f.id,f); $("grid").prepend(makeCard(f)); $("empty").classList.add("hidden") }
-
-function sendTo(conn,msg){try{conn.send(msg)}catch(e){}}
-function broadcast(msg,exceptId=null){for(const [id,c] of connections){if(id!==exceptId && c.open)sendTo(c,msg)}}
-
-function setupConnection(conn){
-  connections.set(conn.peer,conn);
-  conn.on("open",()=>{
-    status("✅ Đã kết nối. Phòng: "+room);
-    if(isHost){
-      sendTo(conn,{type:"sync",files:[...files.values()].map(f=>({id:f.id,name:f.name,size:f.size,type:f.type,data:f.data}))});
-    }
-  });
-  conn.on("data",data=>handleData(conn,data));
-  conn.on("close",()=>connections.delete(conn.peer));
-  conn.on("error",e=>console.error("peer",e));
-}
-
-function handleData(conn,msg){
-  if(!msg||!msg.type)return;
-
-  if(msg.type==="hello" && isHost){
-    // no-op; open handler sends current files
-    return;
-  }
-
-  if(msg.type==="sync"){
-    (msg.files||[]).forEach(f=>{
-      if(!f.data)return;
-      const blob=new Blob([f.data],{type:f.type});
-      const url=URL.createObjectURL(blob);
-      showFile({id:f.id,name:f.name,size:f.size,type:f.type,url,data:f.data});
-    });
-    return;
-  }
-
-  if(msg.type==="file"){
-    const blob=new Blob([msg.data],{type:msg.typeName});
-    const url=URL.createObjectURL(blob);
-    const f={id:msg.id,name:msg.name,size:msg.size,type:msg.typeName,url,data:msg.data};
-    showFile(f);
-    if(isHost) broadcast({type:"file",id:f.id,name:f.name,size:f.size,typeName:f.type,data:f.data},conn.peer);
-  }
-}
-
-function addQueue(file){
-  const row=document.createElement("div");row.className="upload";row.innerHTML="<b>"+esc(file.name)+"</b><div class='progress'><i></i></div><div class='small'>Chuẩn bị...</div>";
-  $("queue").prepend(row);return {row,bar:row.querySelector("i"),state:row.querySelector(".small")}
-}
-
-/* P2P uses ArrayBuffer chunks so large files don't have to be converted to base64. */
-async function sendFile(file){
-  if(!room||!peer){status("❌ Hãy tạo/vào phòng trước.");return}
-  const ui=addQueue(file);
-  const id=crypto.randomUUID();
-  const buffer=await file.arrayBuffer();
-  const f={id,name:file.name,size:file.size,type:file.type||"application/octet-stream",url:URL.createObjectURL(file),data:buffer};
-  // Show immediately on sender
-  showFile(f);
-
-  if(isHost){
-    // Host simply distributes it to all connected peers.
-    const msg={type:"file",id,name:file.name,size:file.size,typeName:f.type,data:buffer};
-    broadcast(msg);
-    ui.bar.style.width="100%";ui.state.textContent="✅ Đã chia sẻ cho phòng";
-  }else{
-    const host=connections.get(room);
-    if(!host||!host.open){ui.state.textContent="❌ Chưa kết nối host";return}
-    host.send({type:"file",id,name:file.name,size:file.size,typeName:f.type,data:buffer});
-    ui.bar.style.width="100%";ui.state.textContent="✅ Đã gửi cho host";
-  }
-  setTimeout(()=>ui.row.remove(),1800);
-}
-
-$("hostBtn").onclick=()=>{
-  if(peer)return;
-  room=randRoom();isHost=true;
-  peer=new Peer(room,{debug:1});
-  peer.on("open",id=>{room=id;setRoomUI();status("🟢 Bạn là HOST. Gửi mã phòng cho người khác.");});
-  peer.on("connection",setupConnection);
-  peer.on("error",e=>{console.error(e);status("❌ "+(e.type||e.message||"Lỗi PeerJS"));});
-};
-$("joinBtn").onclick=()=>{
-  if(peer)return;
-  room=$("roomInput").value.trim();
-  if(!room){status("❌ Nhập mã phòng.");return}
-  isHost=false;peer=new Peer();
-  peer.on("open",()=>{setRoomUI();const c=peer.connect(room,{reliable:true});setupConnection(c);status("⏳ Đang kết nối host...");});
-  peer.on("error",e=>{console.error(e);status("❌ Không vào được phòng: "+(e.type||e.message));});
-};
-$("copyBtn").onclick=async()=>{try{await navigator.clipboard.writeText(room);status("✅ Đã copy mã phòng")}catch{prompt("Mã phòng:",room)}};
-$("drop").onclick=()=>$("picker").click();
-$("picker").onchange=e=>{[...e.target.files].forEach(sendFile);e.target.value=""};
-$("drop").ondragover=e=>{e.preventDefault();$("drop").classList.add("drag")};
-$("drop").ondragleave=()=>$("drop").classList.remove("drag");
-$("drop").ondrop=e=>{e.preventDefault();$("drop").classList.remove("drag");[...e.dataTransfer.files].forEach(sendFile)};
-
-function randRoom(){return"td-"+Math.random().toString(36).slice(2,10)}
-</script>
-</body>
-</html>
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const fmt=n=>{if(!n)return'0 B';const u=['B','KB','MB','GB','TB'];let i=Math.min(4,Math.floor(Math.log(n)/Math.log(1024)));return(n/1024**i).toFixed(i?1:0)+' '+u[i]};
+async function api(path,opt={}){const r=await fetch(API_BASE+path,opt);if(!r.ok)throw new Error((await r.text().catch(()=>''))||('HTTP '+r.status));return r.json()}
+async function enterRoom(){room=$('room').value.trim().toUpperCase();if(!/^[A-Z0-9_-]{3,32}$/.test(room)){alert('Mã phòng 3-32 ký tự: A-Z, 0-9, _ hoặc -');return}$('roomUI').classList.remove('hidden');$('badge').textContent='ROOM '+room;$('badge').classList.remove('hidden');await load()}
+async function load(){ $('empty').textContent='☁ Đang tải...';try{files=await api('/rooms/'+encodeURIComponent(room)+'/files');render()}catch(e){$('empty').innerHTML='❌ '+esc(e.message)+'<br><br><span class="small">Kiểm tra backend URL.</span>'}}
+function render(){
+$('grid').innerHTML='';$('empty').classList.toggle('hidden',files.length>0);if(!files.length){$('empty').textContent='Phòng chưa có file.';return}
+files.forEach(f=>{const c=document.createElement('div');c.className='card';const p=document.createElement('div');p.className='preview';const t=f.contentType||'';
+if(t.startsWith('image/'))p.innerHTML=`<img src="${f.url}" loading="lazy">`;else if(t.startsWith('video/'))p.innerHTML=`<video src="${f.url}" controls preload="metadata"></video>`;else if(t==='application/pdf')p.innerHTML=`<iframe src="${f.url}"></iframe>`;else p.innerHTML=`<div class="ico">${t.startsWith('audio/')?'🎵':'📄'}</div>`;
+const n=document.createElement('div');n.className='name';n.textContent=f.name;n.title=f.name;const m=document.createElement('div');m.className='meta';m.textContent=fmt(f.size);
+const a=document.createElement('div');a.className='actions';const d=document.createElement('a');d.className='blue';d.style.padding='9px';d.style.borderRadius='8px';d.style.color='#fff';d.textContent='Tải';d.href=f.url;d.target='_blank';d.download=f.name;
+const cp=document.createElement('button');cp.className='gray';cp.textContent='Copy';cp.onclick=async()=>{await navigator.clipboard.writeText(f.url);cp.textContent='✓';setTimeout(()=>cp.textContent='Copy',900)};a.append(d,cp);c.append(p,n,m,a);$('grid').appendChild(c)})}
+async function upload(file){const fd=new FormData();fd.append('file',file);$('status').textContent='🚀 Đang lưu '+file.name+'...';try{await api('/rooms/'+encodeURIComponent(room)+'/files',{method:'POST',body:fd});$('status').textContent='✅ Đã lưu: '+file.name;await load()}catch(e){$('status').textContent='❌ Upload lỗi: '+e.message}}
+$('enter').onclick=enterRoom;$('room').onkeydown=e=>{if(e.key==='Enter')enterRoom()};$('drop').onclick=()=>$('picker').click();$('picker').onchange=e=>{[...e.target.files].forEach(upload);e.target.value=''};$('drop').ondragover=e=>{e.preventDefault();$('drop').classList.add('drag')};$('drop').ondragleave=()=>$('drop').classList.remove('drag');$('drop').ondrop=e=>{e.preventDefault();$('drop').classList.remove('drag');[...e.dataTransfer.files].forEach(upload)};
+</script></body></html>
