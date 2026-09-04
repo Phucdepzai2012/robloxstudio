@@ -1,42 +1,1464 @@
 <!doctype html>
 <html lang="vi">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Room Drive</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#202124}
-header{height:64px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 20px;font-size:21px;font-weight:800;color:#1a73e8}
-main{max-width:1050px;margin:24px auto;padding:0 14px}.panel{background:#fff;border:1px solid #e1e5ea;border-radius:14px;padding:18px;margin-bottom:15px}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
-input,button{font:inherit}input{border:1px solid #d3d8df;border-radius:9px;padding:12px;outline:0;min-width:250px}button{border:0;border-radius:9px;padding:12px 17px;cursor:pointer;font-weight:700}.blue{background:#1a73e8;color:#fff}.gray{background:#eef1f5}
-.badge{font-weight:800;letter-spacing:2px;background:#f1f3f4;padding:10px 13px;border-radius:9px}.small{font-size:12px;color:#6b7280;line-height:1.5}.status{font-size:13px;color:#5f6368;margin-top:9px}
-.drop{border:2px dashed #b8cdf3;background:#f8fbff;padding:36px;text-align:center;border-radius:14px;cursor:pointer}.drop.drag{background:#e8f0fe;border-color:#1a73e8}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.card{background:#fff;border:1px solid #e1e5ea;border-radius:12px;padding:11px}.preview{height:145px;background:#eef1f4;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}.preview img,.preview video{width:100%;height:100%;object-fit:cover}.preview iframe{width:100%;height:100%;border:0}.ico{font-size:50px}
-.name{font-weight:700;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:12px;color:#6b7280;margin-top:5px}.actions{display:flex;gap:6px;margin-top:10px}.actions>*{flex:1;text-align:center;text-decoration:none}.empty{text-align:center;color:#777;padding:55px}.hidden{display:none!important}
-</style></head><body>
-<header>☁ Room Drive</header>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5f7fb;
+  color:#202124
+}
+
+header{
+  height:64px;
+  background:#fff;
+  border-bottom:1px solid #ddd;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  font-size:21px;
+  font-weight:800;
+  color:#1a73e8
+}
+
+main{
+  max-width:1050px;
+  margin:24px auto;
+  padding:0 14px
+}
+
+.panel{
+  background:#fff;
+  border:1px solid #e1e5ea;
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:15px
+}
+
+.row{
+  display:flex;
+  gap:9px;
+  align-items:center;
+  flex-wrap:wrap
+}
+
+input,button{font:inherit}
+
+input{
+  border:1px solid #d3d8df;
+  border-radius:9px;
+  padding:12px;
+  outline:0;
+  min-width:250px
+}
+
+button{
+  border:0;
+  border-radius:9px;
+  padding:12px 17px;
+  cursor:pointer;
+  font-weight:700
+}
+
+.blue{
+  background:#1a73e8;
+  color:#fff
+}
+
+.gray{
+  background:#eef1f5
+}
+
+.red{
+  background:#ea4335;
+  color:#fff
+}
+
+.green{
+  background:#188038;
+  color:#fff
+}
+
+.google{
+  background:#fff;
+  color:#202124;
+  border:1px solid #dadce0
+}
+
+.badge{
+  font-weight:800;
+  letter-spacing:2px;
+  background:#f1f3f4;
+  padding:10px 13px;
+  border-radius:9px
+}
+
+.small{
+  font-size:12px;
+  color:#6b7280;
+  line-height:1.5
+}
+
+.status{
+  font-size:13px;
+  color:#5f6368;
+  margin-top:9px
+}
+
+.drop{
+  border:2px dashed #b8cdf3;
+  background:#f8fbff;
+  padding:36px;
+  text-align:center;
+  border-radius:14px;
+  cursor:pointer
+}
+
+.drop.drag{
+  background:#e8f0fe;
+  border-color:#1a73e8
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:14px
+}
+
+.card{
+  background:#fff;
+  border:1px solid #e1e5ea;
+  border-radius:12px;
+  padding:11px
+}
+
+.preview{
+  height:145px;
+  background:#eef1f4;
+  border-radius:9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden
+}
+
+.preview img,
+.preview video{
+  width:100%;
+  height:100%;
+  object-fit:cover
+}
+
+.preview iframe{
+  width:100%;
+  height:100%;
+  border:0
+}
+
+.ico{
+  font-size:50px
+}
+
+.name{
+  font-weight:700;
+  margin-top:9px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+
+.meta{
+  font-size:12px;
+  color:#6b7280;
+  margin-top:5px
+}
+
+.actions{
+  display:flex;
+  gap:6px;
+  margin-top:10px
+}
+
+.actions>*{
+  flex:1;
+  text-align:center;
+  text-decoration:none
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:55px
+}
+
+.hidden{
+  display:none!important
+}
+
+.userbox{
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+.avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%
+}
+
+hr{
+  border:0;
+  border-top:1px solid #eee;
+  margin:18px 0
+}
+
+.password-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:12px
+}
+
+.password-item{
+  background:#f5f7fb;
+  border:1px solid #e1e5ea;
+  padding:10px;
+  border-radius:9px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>☁ Room Drive</div>
+
+  <div id="userBox" class="userbox hidden">
+    <img id="avatar" class="avatar">
+    <span id="userName"></span>
+    <button id="logout" class="gray">Đăng xuất</button>
+  </div>
+</header>
+
 <main>
-<div class="panel"><div class="row"><input id="room" maxlength="32" placeholder="Nhập mã phòng, VD: ABC123"><button id="enter" class="blue">Vào phòng</button><span id="badge" class="badge hidden"></span></div><div class="small" style="margin-top:9px">Chỉ nhập mã phòng. Kho phía sau được cấu hình sẵn.</div></div>
+
+<!-- LOGIN -->
+
+<div id="loginPanel" class="panel">
+  <h3>🔐 Đăng nhập</h3>
+
+  <p class="small">
+    Đăng nhập Google để tạo phòng, quản lý phòng và lưu file.
+  </p>
+
+  <button id="googleLogin" class="google">
+    🇬 Google Đăng nhập
+  </button>
+
+  <div id="loginStatus" class="status"></div>
+</div>
+
+
+<!-- ROOM CONTROLS -->
+
+<div id="roomControl" class="hidden">
+
+  <div class="panel">
+
+    <h3>📁 Phòng của bạn</h3>
+
+    <div class="row">
+
+      <button id="createRoom" class="green">
+        ➕ Tạo phòng
+      </button>
+
+      <input
+        id="room"
+        maxlength="32"
+        placeholder="Mã phòng, VD: ABC123"
+      >
+
+      <button id="enter" class="blue">
+        Vào phòng
+      </button>
+
+    </div>
+
+    <div class="small" style="margin-top:9px">
+      Bạn có thể tạo phòng mới hoặc tham gia phòng bằng mã + mật khẩu.
+    </div>
+
+  </div>
+
+
+  <!-- CREATE ROOM -->
+
+  <div id="createRoomPanel" class="panel hidden">
+
+    <h3>➕ Tạo phòng mới</h3>
+
+    <div class="row">
+
+      <input
+        id="newRoom"
+        maxlength="32"
+        placeholder="Mã phòng"
+      >
+
+      <input
+        id="newPassword"
+        type="password"
+        placeholder="Mật khẩu đầu tiên"
+      >
+
+      <button id="doCreateRoom" class="green">
+        Tạo phòng
+      </button>
+
+    </div>
+
+    <div id="createStatus" class="status"></div>
+
+  </div>
+
+</div>
+
+
+<!-- ROOM -->
+
 <div id="roomUI" class="hidden">
-<div class="panel"><div id="drop" class="drop"><b>📤 Chọn hoặc kéo thả file</b><br><span class="small">File sẽ được lưu lâu dài vào phòng và người khác cùng mã phòng sẽ thấy.</span><input id="picker" type="file" multiple hidden></div><div id="status" class="status"></div></div>
-<div id="grid" class="grid"></div><div id="empty" class="empty">Đang tải file...</div></div>
+
+  <div class="panel">
+
+    <div class="row">
+
+      <span id="badge" class="badge"></span>
+
+      <span id="roomRole" class="small"></span>
+
+    </div>
+
+    <div class="small" style="margin-top:10px">
+      Người dùng cùng mã phòng và mật khẩu hợp lệ sẽ thấy các file trong phòng.
+    </div>
+
+  </div>
+
+
+  <!-- OWNER -->
+
+  <div id="ownerPanel" class="panel hidden">
+
+    <h3>👑 Quản lý phòng</h3>
+
+    <div class="small">
+      Bạn là Chủ phòng. Bạn có thể thêm hoặc xóa mật khẩu truy cập.
+    </div>
+
+    <hr>
+
+    <div class="row">
+
+      <input
+        id="extraPassword"
+        type="password"
+        placeholder="Mật khẩu mới"
+      >
+
+      <button id="addPassword" class="blue">
+        + Thêm mật khẩu
+      </button>
+
+    </div>
+
+    <div id="passwordList" class="password-list"></div>
+
+  </div>
+
+
+  <!-- JOIN PASSWORD -->
+
+  <div id="joinPasswordPanel" class="panel hidden">
+
+    <h3>🔑 Mật khẩu phòng</h3>
+
+    <div class="row">
+
+      <input
+        id="roomPassword"
+        type="password"
+        placeholder="Nhập mật khẩu phòng"
+      >
+
+      <button id="verifyRoom" class="blue">
+        Xác nhận
+      </button>
+
+    </div>
+
+    <div id="verifyStatus" class="status"></div>
+
+  </div>
+
+
+  <!-- FILE AREA -->
+
+  <div id="fileArea" class="hidden">
+
+    <div class="panel">
+
+      <div
+        id="drop"
+        class="drop"
+      >
+        <b>📤 Chọn hoặc kéo thả file</b>
+        <br>
+        <span class="small">
+          File sẽ được lưu lâu dài trong phòng.
+        </span>
+
+        <input
+          id="picker"
+          type="file"
+          multiple
+          hidden
+        >
+      </div>
+
+      <div id="status" class="status"></div>
+
+    </div>
+
+    <div id="grid" class="grid"></div>
+
+    <div id="empty" class="empty">
+      Đang tải file...
+    </div>
+
+  </div>
+
+</div>
+
 </main>
-<script>
-// Chỉ người quản trị sửa dòng này. Người dùng cuối chỉ nhập mã phòng.
-const API_BASE="YOUR_BACKEND_URL";
-let room="",files=[];
-const $=id=>document.getElementById(id);
-const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const fmt=n=>{if(!n)return'0 B';const u=['B','KB','MB','GB','TB'];let i=Math.min(4,Math.floor(Math.log(n)/Math.log(1024)));return(n/1024**i).toFixed(i?1:0)+' '+u[i]};
-async function api(path,opt={}){const r=await fetch(API_BASE+path,opt);if(!r.ok)throw new Error((await r.text().catch(()=>''))||('HTTP '+r.status));return r.json()}
-async function enterRoom(){room=$('room').value.trim().toUpperCase();if(!/^[A-Z0-9_-]{3,32}$/.test(room)){alert('Mã phòng 3-32 ký tự: A-Z, 0-9, _ hoặc -');return}$('roomUI').classList.remove('hidden');$('badge').textContent='ROOM '+room;$('badge').classList.remove('hidden');await load()}
-async function load(){ $('empty').textContent='☁ Đang tải...';try{files=await api('/rooms/'+encodeURIComponent(room)+'/files');render()}catch(e){$('empty').innerHTML='❌ '+esc(e.message)+'<br><br><span class="small">Kiểm tra backend URL.</span>'}}
+
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import {
+  initializeApp
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+// ======================================================
+// FIREBASE CONFIG
+// THAY BẰNG CONFIG FIREBASE CỦA BẠN
+// ======================================================
+
+const firebaseConfig = {
+
+  apiKey:
+    "YOUR_FIREBASE_API_KEY",
+
+  authDomain:
+    "YOUR_PROJECT.firebaseapp.com",
+
+  projectId:
+    "YOUR_PROJECT_ID",
+
+  storageBucket:
+    "YOUR_PROJECT.firebasestorage.app",
+
+  messagingSenderId:
+    "YOUR_SENDER_ID",
+
+  appId:
+    "YOUR_APP_ID"
+
+};
+
+
+// ======================================================
+// APP
+// ======================================================
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const provider = new GoogleAuthProvider();
+
+
+// ======================================================
+// BACKEND
+// ======================================================
+
+const API_BASE =
+  "YOUR_BACKEND_URL";
+
+
+// ======================================================
+// STATE
+// ======================================================
+
+let currentUser = null;
+let room = "";
+let roomToken = "";
+let files = [];
+
+
+// ======================================================
+// HELPERS
+// ======================================================
+
+const $ = id =>
+  document.getElementById(id);
+
+const esc = s =>
+  String(s).replace(
+    /[&<>"']/g,
+    m =>
+      ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#039;'
+      })[m]
+  );
+
+const fmt = n => {
+
+  if(!n) return "0 B";
+
+  const u =
+    ['B','KB','MB','GB','TB'];
+
+  let i =
+    Math.min(
+      4,
+      Math.floor(
+        Math.log(n) /
+        Math.log(1024)
+      )
+    );
+
+  return (
+    n / 1024 ** i
+  ).toFixed(i ? 1 : 0)
+  + " "
+  + u[i];
+
+};
+
+
+// ======================================================
+// FIREBASE TOKEN
+// ======================================================
+
+async function getToken(){
+
+  if(!currentUser)
+    throw new Error("Chưa đăng nhập");
+
+  return await currentUser.getIdToken();
+
+}
+
+
+// ======================================================
+// BACKEND API
+// ======================================================
+
+async function api(
+  path,
+  options = {}
+){
+
+  const token =
+    await getToken();
+
+  options.headers =
+    options.headers || {};
+
+  options.headers[
+    "Authorization"
+  ] =
+    "Bearer " + token;
+
+  const r =
+    await fetch(
+      API_BASE + path,
+      options
+    );
+
+  if(!r.ok){
+
+    const text =
+      await r
+      .text()
+      .catch(()=> "");
+
+    throw new Error(
+      text ||
+      ("HTTP " + r.status)
+    );
+
+  }
+
+  return r.json();
+
+}
+
+
+// ======================================================
+// GOOGLE LOGIN
+// ======================================================
+
+$("googleLogin").onclick =
+async () => {
+
+  $("loginStatus").textContent =
+    "Đang đăng nhập Google...";
+
+  try{
+
+    await signInWithPopup(
+      auth,
+      provider
+    );
+
+  }catch(e){
+
+    $("loginStatus").textContent =
+      "❌ " + e.message;
+
+  }
+
+};
+
+
+// ======================================================
+// LOGOUT
+// ======================================================
+
+$("logout").onclick =
+async () => {
+
+  await signOut(auth);
+
+};
+
+
+// ======================================================
+// AUTH STATE
+// ======================================================
+
+onAuthStateChanged(
+  auth,
+  user => {
+
+    currentUser = user;
+
+    if(user){
+
+      $("loginPanel")
+        .classList.add("hidden");
+
+      $("userBox")
+        .classList.remove("hidden");
+
+      $("roomControl")
+        .classList.remove("hidden");
+
+      $("avatar").src =
+        user.photoURL ||
+        "";
+
+      $("userName").textContent =
+        user.displayName ||
+        user.email ||
+        "Google User";
+
+    }else{
+
+      $("loginPanel")
+        .classList.remove("hidden");
+
+      $("userBox")
+        .classList.add("hidden");
+
+      $("roomControl")
+        .classList.add("hidden");
+
+      $("roomUI")
+        .classList.add("hidden");
+
+    }
+
+  }
+);
+
+
+// ======================================================
+// CREATE ROOM BUTTON
+// ======================================================
+
+$("createRoom").onclick = () => {
+
+  $("createRoomPanel")
+    .classList.toggle("hidden");
+
+};
+
+
+// ======================================================
+// CREATE ROOM
+// ======================================================
+
+$("doCreateRoom").onclick =
+async () => {
+
+  const newRoom =
+    $("newRoom")
+      .value
+      .trim()
+      .toUpperCase();
+
+  const password =
+    $("newPassword")
+      .value;
+
+  if(
+    !/^[A-Z0-9_-]{3,32}$/
+      .test(newRoom)
+  ){
+
+    alert(
+      "Mã phòng phải từ 3-32 ký tự: A-Z, 0-9, _ hoặc -"
+    );
+
+    return;
+
+  }
+
+  if(password.length < 4){
+
+    alert(
+      "Mật khẩu tối thiểu 4 ký tự."
+    );
+
+    return;
+
+  }
+
+  $("createStatus")
+    .textContent =
+    "🚀 Đang tạo phòng...";
+
+  try{
+
+    const result =
+      await api(
+        "/rooms",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+          body:JSON.stringify({
+            room:newRoom,
+            password
+          })
+        }
+      );
+
+    room = newRoom;
+
+    $("room").value =
+      newRoom;
+
+    $("createStatus")
+      .textContent =
+      "✅ Tạo phòng thành công.";
+
+    alert(
+      "Đã tạo phòng " +
+      newRoom +
+      "\nBạn là Chủ phòng."
+    );
+
+    await openRoom();
+
+  }catch(e){
+
+    $("createStatus")
+      .textContent =
+      "❌ " + e.message;
+
+  }
+
+};
+
+
+// ======================================================
+// ENTER ROOM
+// ======================================================
+
+$("enter").onclick =
+async () => {
+
+  const value =
+    $("room")
+      .value
+      .trim()
+      .toUpperCase();
+
+  if(
+    !/^[A-Z0-9_-]{3,32}$/
+      .test(value)
+  ){
+
+    alert(
+      "Mã phòng không hợp lệ."
+    );
+
+    return;
+
+  }
+
+  room = value;
+
+  await openRoom();
+
+};
+
+
+// ======================================================
+// OPEN ROOM
+// ======================================================
+
+async function openRoom(){
+
+  $("roomUI")
+    .classList.remove("hidden");
+
+  $("badge").textContent =
+    "ROOM " + room;
+
+  $("joinPasswordPanel")
+    .classList.remove("hidden");
+
+  $("fileArea")
+    .classList.add("hidden");
+
+  $("ownerPanel")
+    .classList.add("hidden");
+
+  $("verifyStatus").textContent =
+    "Nhập mật khẩu phòng.";
+
+  try{
+
+    const info =
+      await api(
+        "/rooms/" +
+        encodeURIComponent(room)
+      );
+
+    if(info.owner){
+
+      $("roomRole")
+        .textContent =
+        "👑 Bạn là Chủ phòng";
+
+      $("ownerPanel")
+        .classList.remove("hidden");
+
+      renderPasswords(
+        info.passwords || []
+      );
+
+    }else{
+
+      $("roomRole")
+        .textContent =
+        "👤 Thành viên";
+
+    }
+
+  }catch(e){
+
+    $("roomRole")
+      .textContent =
+      "";
+
+  }
+
+}
+
+
+// ======================================================
+// VERIFY ROOM PASSWORD
+// ======================================================
+
+$("verifyRoom").onclick =
+async () => {
+
+  const password =
+    $("roomPassword").value;
+
+  if(!password){
+
+    alert(
+      "Nhập mật khẩu phòng."
+    );
+
+    return;
+
+  }
+
+  $("verifyStatus")
+    .textContent =
+    "🔐 Đang xác thực...";
+
+  try{
+
+    const result =
+      await api(
+        "/rooms/" +
+        encodeURIComponent(room) +
+        "/verify",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+          body:JSON.stringify({
+            password
+          })
+        }
+      );
+
+    roomToken =
+      result.roomToken;
+
+    $("verifyStatus")
+      .textContent =
+      "✅ Đã vào phòng.";
+
+    $("fileArea")
+      .classList.remove("hidden");
+
+    await load();
+
+  }catch(e){
+
+    $("verifyStatus")
+      .textContent =
+      "❌ Sai mật khẩu hoặc phòng không tồn tại.";
+
+  }
+
+};
+
+
+// ======================================================
+// LOAD FILES
+// ======================================================
+
+async function load(){
+
+  $("empty").textContent =
+    "☁ Đang tải...";
+
+  try{
+
+    files =
+      await api(
+        "/rooms/" +
+        encodeURIComponent(room) +
+        "/files"
+      );
+
+    render();
+
+  }catch(e){
+
+    $("empty").innerHTML =
+      "❌ " +
+      esc(e.message);
+
+  }
+
+}
+
+
+// ======================================================
+// RENDER FILES
+// ======================================================
+
 function render(){
-$('grid').innerHTML='';$('empty').classList.toggle('hidden',files.length>0);if(!files.length){$('empty').textContent='Phòng chưa có file.';return}
-files.forEach(f=>{const c=document.createElement('div');c.className='card';const p=document.createElement('div');p.className='preview';const t=f.contentType||'';
-if(t.startsWith('image/'))p.innerHTML=`<img src="${f.url}" loading="lazy">`;else if(t.startsWith('video/'))p.innerHTML=`<video src="${f.url}" controls preload="metadata"></video>`;else if(t==='application/pdf')p.innerHTML=`<iframe src="${f.url}"></iframe>`;else p.innerHTML=`<div class="ico">${t.startsWith('audio/')?'🎵':'📄'}</div>`;
-const n=document.createElement('div');n.className='name';n.textContent=f.name;n.title=f.name;const m=document.createElement('div');m.className='meta';m.textContent=fmt(f.size);
-const a=document.createElement('div');a.className='actions';const d=document.createElement('a');d.className='blue';d.style.padding='9px';d.style.borderRadius='8px';d.style.color='#fff';d.textContent='Tải';d.href=f.url;d.target='_blank';d.download=f.name;
-const cp=document.createElement('button');cp.className='gray';cp.textContent='Copy';cp.onclick=async()=>{await navigator.clipboard.writeText(f.url);cp.textContent='✓';setTimeout(()=>cp.textContent='Copy',900)};a.append(d,cp);c.append(p,n,m,a);$('grid').appendChild(c)})}
-async function upload(file){const fd=new FormData();fd.append('file',file);$('status').textContent='🚀 Đang lưu '+file.name+'...';try{await api('/rooms/'+encodeURIComponent(room)+'/files',{method:'POST',body:fd});$('status').textContent='✅ Đã lưu: '+file.name;await load()}catch(e){$('status').textContent='❌ Upload lỗi: '+e.message}}
-$('enter').onclick=enterRoom;$('room').onkeydown=e=>{if(e.key==='Enter')enterRoom()};$('drop').onclick=()=>$('picker').click();$('picker').onchange=e=>{[...e.target.files].forEach(upload);e.target.value=''};$('drop').ondragover=e=>{e.preventDefault();$('drop').classList.add('drag')};$('drop').ondragleave=()=>$('drop').classList.remove('drag');$('drop').ondrop=e=>{e.preventDefault();$('drop').classList.remove('drag');[...e.dataTransfer.files].forEach(upload)};
-</script></body></html>
+
+  $("grid").innerHTML = "";
+
+  $("empty")
+    .classList
+    .toggle(
+      "hidden",
+      files.length > 0
+    );
+
+  if(!files.length){
+
+    $("empty").textContent =
+      "Phòng chưa có file.";
+
+    return;
+
+  }
+
+  files.forEach(f => {
+
+    const c =
+      document.createElement(
+        "div"
+      );
+
+    c.className = "card";
+
+    const p =
+      document.createElement(
+        "div"
+      );
+
+    p.className = "preview";
+
+    const t =
+      f.contentType || "";
+
+    if(t.startsWith("image/")){
+
+      p.innerHTML =
+        `<img src="${f.url}" loading="lazy">`;
+
+    }
+    else
+    if(t.startsWith("video/")){
+
+      p.innerHTML =
+        `<video src="${f.url}" controls preload="metadata"></video>`;
+
+    }
+    else
+    if(t === "application/pdf"){
+
+      p.innerHTML =
+        `<iframe src="${f.url}"></iframe>`;
+
+    }
+    else{
+
+      p.innerHTML =
+        `<div class="ico">${
+          t.startsWith("audio/")
+          ? "🎵"
+          : "📄"
+        }</div>`;
+
+    }
+
+    const n =
+      document.createElement(
+        "div"
+      );
+
+    n.className = "name";
+    n.textContent =
+      f.name;
+
+    n.title =
+      f.name;
+
+    const m =
+      document.createElement(
+        "div"
+      );
+
+    m.className = "meta";
+
+    m.textContent =
+      fmt(f.size);
+
+    const a =
+      document.createElement(
+        "div"
+      );
+
+    a.className = "actions";
+
+    const d =
+      document.createElement(
+        "a"
+      );
+
+    d.className = "blue";
+
+    d.style.padding =
+      "9px";
+
+    d.style.borderRadius =
+      "8px";
+
+    d.style.color =
+      "#fff";
+
+    d.textContent =
+      "Tải";
+
+    d.href =
+      f.url;
+
+    d.target =
+      "_blank";
+
+    d.download =
+      f.name;
+
+    const cp =
+      document.createElement(
+        "button"
+      );
+
+    cp.className =
+      "gray";
+
+    cp.textContent =
+      "Copy";
+
+    cp.onclick =
+    async () => {
+
+      await navigator
+        .clipboard
+        .writeText(f.url);
+
+      cp.textContent = "✓";
+
+      setTimeout(
+        () =>
+          cp.textContent =
+          "Copy",
+        900
+      );
+
+    };
+
+    a.append(d,cp);
+
+    c.append(
+      p,
+      n,
+      m,
+      a
+    );
+
+    $("grid")
+      .appendChild(c);
+
+  });
+
+}
+
+
+// ======================================================
+// UPLOAD
+// ======================================================
+
+async function upload(file){
+
+  const fd =
+    new FormData();
+
+  fd.append(
+    "file",
+    file
+  );
+
+  $("status").textContent =
+    "🚀 Đang lưu " +
+    file.name +
+    "...";
+
+  try{
+
+    await api(
+      "/rooms/" +
+      encodeURIComponent(room) +
+      "/files",
+      {
+        method:"POST",
+        headers:{
+          "X-Room-Token":
+            roomToken
+        },
+        body:fd
+      }
+    );
+
+    $("status").textContent =
+      "✅ Đã lưu: " +
+      file.name;
+
+    await load();
+
+  }catch(e){
+
+    $("status").textContent =
+      "❌ Upload lỗi: " +
+      e.message;
+
+  }
+
+}
+
+
+// ======================================================
+// ADD PASSWORD
+// ======================================================
+
+$("addPassword").onclick =
+async () => {
+
+  const password =
+    $("extraPassword")
+      .value;
+
+  if(password.length < 4){
+
+    alert(
+      "Mật khẩu tối thiểu 4 ký tự."
+    );
+
+    return;
+
+  }
+
+  try{
+
+    const result =
+      await api(
+        "/rooms/" +
+        encodeURIComponent(room) +
+        "/passwords",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":
+              "application/json",
+            "X-Room-Token":
+              roomToken
+          },
+          body:JSON.stringify({
+            password
+          })
+        }
+      );
+
+    $("extraPassword")
+      .value = "";
+
+    renderPasswords(
+      result.passwords || []
+    );
+
+  }catch(e){
+
+    alert(
+      "Không thể thêm mật khẩu: " +
+      e.message
+    );
+
+  }
+
+};
+
+
+// ======================================================
+// PASSWORD LIST
+// ======================================================
+
+function renderPasswords(list){
+
+  const box =
+    $("passwordList");
+
+  box.innerHTML = "";
+
+  if(!list.length){
+
+    box.innerHTML =
+      `<div class="small">
+        Chưa có mật khẩu.
+      </div>`;
+
+    return;
+
+  }
+
+  list.forEach(p => {
+
+    const item =
+      document.createElement(
+        "div"
+      );
+
+    item.className =
+      "password-item";
+
+    item.innerHTML =
+      `
+      <span>🔑 ${esc(p.name || "Mật khẩu")}</span>
+      <button class="red">
+        Xóa
+      </button>
+      `;
+
+    item
+      .querySelector("button")
+      .onclick =
+      async () => {
+
+        if(
+          !confirm(
+            "Xóa mật khẩu này?"
+          )
+        ) return;
+
+        try{
+
+          const result =
+            await api(
+              "/rooms/" +
+              encodeURIComponent(room) +
+              "/passwords/" +
+              encodeURIComponent(
+                p.id
+              ),
+              {
+                method:"DELETE",
+                headers:{
+                  "X-Room-Token":
+                    roomToken
+                }
+              }
+            );
+
+          renderPasswords(
+            result.passwords || []
+          );
+
+        }catch(e){
+
+          alert(e.message);
+
+        }
+
+      };
+
+    box.appendChild(item);
+
+  });
+
+}
+
+
+// ======================================================
+// FILE PICKER
+// ======================================================
+
+$("drop").onclick =
+() =>
+  $("picker").click();
+
+$("picker").onchange =
+e => {
+
+  [
+    ...e.target.files
+  ].forEach(upload);
+
+  e.target.value = "";
+
+};
+
+
+// ======================================================
+// DRAG DROP
+// ======================================================
+
+$("drop").ondragover =
+e => {
+
+  e.preventDefault();
+
+  $("drop")
+    .classList
+    .add("drag");
+
+};
+
+$("drop").ondragleave =
+() => {
+
+  $("drop")
+    .classList
+    .remove("drag");
+
+};
+
+$("drop").ondrop =
+e => {
+
+  e.preventDefault();
+
+  $("drop")
+    .classList
+    .remove("drag");
+
+  [
+    ...e.dataTransfer.files
+  ].forEach(upload);
+
+};
+
+</script>
+
+</body>
+</html>
