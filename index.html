@@ -65,7 +65,8 @@ input{
 }
 
 input:focus{
-  border-color:#1a73e8
+  border-color:#1a73e8;
+  box-shadow:0 0 0 3px rgba(26,115,232,.08)
 }
 
 button{
@@ -77,7 +78,7 @@ button{
 }
 
 button:disabled{
-  opacity:.5;
+  opacity:.55;
   cursor:not-allowed
 }
 
@@ -103,7 +104,12 @@ button:disabled{
 
 .google{
   background:#fff;
+  color:#202124;
   border:1px solid #dadce0
+}
+
+.google:hover{
+  background:#f8f9fa
 }
 
 .small{
@@ -138,9 +144,9 @@ button:disabled{
 }
 
 .user-name{
-  max-width:180px;
-  overflow:hidden;
+  max-width:190px;
   white-space:nowrap;
+  overflow:hidden;
   text-overflow:ellipsis
 }
 
@@ -180,7 +186,7 @@ button:disabled{
 
 .room-box{
   background:#f8fbff;
-  border:1px solid #d8e6fb;
+  border:1px solid #d7e4f8;
   border-radius:12px;
   padding:16px
 }
@@ -194,8 +200,8 @@ button:disabled{
 }
 
 .password-wrap{
-  position:relative;
-  width:100%
+  width:100%;
+  position:relative
 }
 
 .password-wrap input{
@@ -205,7 +211,7 @@ button:disabled{
 
 .eye{
   position:absolute;
-  right:4px;
+  right:5px;
   top:50%;
   transform:translateY(-50%);
   padding:8px 10px;
@@ -234,10 +240,14 @@ button:disabled{
   align-items:center;
   justify-content:space-between;
   gap:10px;
-  padding:11px;
+  padding:11px 12px;
   border:1px solid #e1e5ea;
   background:#f8f9fa;
   border-radius:10px
+}
+
+.password-left{
+  min-width:0
 }
 
 .password-title{
@@ -256,7 +266,12 @@ button:disabled{
   padding:36px;
   text-align:center;
   border-radius:14px;
-  cursor:pointer
+  cursor:pointer;
+  transition:.15s
+}
+
+.drop:hover{
+  background:#f0f6ff
 }
 
 .drop.drag{
@@ -274,17 +289,18 @@ button:disabled{
   background:#fff;
   border:1px solid #e1e5ea;
   border-radius:12px;
-  padding:11px
+  padding:11px;
+  overflow:hidden
 }
 
 .preview{
   height:145px;
   background:#eef1f4;
   border-radius:9px;
-  overflow:hidden;
   display:flex;
   align-items:center;
-  justify-content:center
+  justify-content:center;
+  overflow:hidden
 }
 
 .preview img,
@@ -341,14 +357,8 @@ button:disabled{
 }
 
 @media(max-width:700px){
-  input{
-    min-width:0;
-    width:100%
-  }
-
-  .user-name{
-    display:none
-  }
+  input{min-width:0;width:100%}
+  .user-name{display:none}
 }
 </style>
 </head>
@@ -356,402 +366,193 @@ button:disabled{
 <body>
 
 <header>
+  <div class="logo">☁ Room Drive</div>
 
-  <div class="logo">
-    ☁ Room Drive
-  </div>
+  <div id="userBox" class="userbox hidden">
 
-  <div
-    id="userBox"
-    class="userbox hidden"
-  >
+    <img id="avatar" class="avatar" alt="">
 
-    <img
-      id="avatar"
-      class="avatar"
-      alt=""
-    >
+    <span id="userName" class="user-name"></span>
 
-    <span
-      id="userName"
-      class="user-name"
-    ></span>
-
-    <button
-      id="logout"
-      class="gray"
-    >
+    <button id="logout" class="gray">
       Đăng xuất
     </button>
 
   </div>
-
 </header>
 
 
 <main>
 
-  <!-- LOGIN -->
+<!-- ================================================= -->
+<!-- LOGIN -->
+<!-- ================================================= -->
+
+<div id="loginPanel" class="panel">
+
+  <h2 style="margin-top:0">
+    ☁ Room Drive
+  </h2>
+
+  <div class="small">
+    Đăng nhập Google để tạo phòng hoặc tham gia phòng.
+  </div>
+
+  <div style="margin-top:15px">
+
+    <button
+      id="googleLogin"
+      class="google"
+    >
+      🔵 Đăng nhập bằng Google
+    </button>
+
+  </div>
 
   <div
-    id="loginPanel"
-    class="panel"
-  >
+    id="loginStatus"
+    class="status"
+  ></div>
 
-    <h2 style="margin-top:0">
-      ☁ Room Drive
-    </h2>
+</div>
 
-    <div class="small">
-      Đăng nhập Google để tạo phòng hoặc tham gia phòng.
-    </div>
 
-    <div style="margin-top:15px">
+<!-- ================================================= -->
+<!-- HOME -->
+<!-- ================================================= -->
+
+<div
+  id="home"
+  class="hidden"
+>
+
+  <div class="panel">
+
+    <div class="top-title">
+
+      <div>
+
+        <h3 style="margin:0 0 5px">
+          📁 Phòng
+        </h3>
+
+        <div class="small">
+          Tạo phòng mới hoặc nhập mã phòng để tham gia.
+        </div>
+
+      </div>
 
       <button
-        id="googleLogin"
-        class="google"
+        id="createRoomBtn"
+        class="green"
       >
-        🔵 Đăng nhập bằng Google
+        ➕ Tạo phòng
+      </button>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+
+      <input
+        id="roomInput"
+        maxlength="32"
+        placeholder="Nhập mã phòng"
+        autocomplete="off"
+      >
+
+      <button
+        id="joinRoomBtn"
+        class="blue"
+      >
+        Vào phòng
       </button>
 
     </div>
 
     <div
-      id="loginStatus"
+      id="homeStatus"
       class="status"
     ></div>
 
   </div>
 
 
-  <!-- HOME -->
+  <!-- ================================================= -->
+  <!-- CREATE -->
+  <!-- ================================================= -->
 
   <div
-    id="home"
-    class="hidden"
+    id="createPanel"
+    class="panel hidden"
   >
 
-    <div class="panel">
+    <h3 style="margin-top:0">
+      ✨ Tạo phòng mới
+    </h3>
 
-      <div class="top-title">
-
-        <div>
-          <h3 style="margin:0 0 5px">
-            📁 Room Drive
-          </h3>
-
-          <div class="small">
-            Tạo phòng mới hoặc nhập mã phòng để tham gia.
-          </div>
-        </div>
-
-        <button
-          id="createRoomBtn"
-          class="green"
-        >
-          ➕ Tạo phòng
-        </button>
-
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="row">
-
-        <input
-          id="roomInput"
-          maxlength="32"
-          placeholder="Nhập mã phòng"
-          autocomplete="off"
-        >
-
-        <button
-          id="joinRoomBtn"
-          class="blue"
-        >
-          Vào phòng
-        </button>
-
-      </div>
-
-      <div
-        id="homeStatus"
-        class="status"
-      ></div>
-
+    <div class="small">
+      Mã phòng và mật khẩu được tạo tự động.
     </div>
 
+    <div class="divider"></div>
 
-    <!-- CREATE ROOM -->
 
-    <div
-      id="createPanel"
-      class="panel hidden"
-    >
-
-      <h3 style="margin-top:0">
-        ✨ Tạo phòng mới
-      </h3>
+    <div class="room-box">
 
       <div class="small">
-        Mã phòng và mật khẩu đều được hệ thống tự tạo.
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="room-box">
-
-        <div class="small">
-          Mã phòng
-        </div>
-
-        <div
-          id="newRoomCode"
-          class="room-code"
-        >
-          ROOM-------
-        </div>
-
-        <div
-          class="row"
-          style="margin-top:12px"
-        >
-
-          <button
-            id="copyRoomCode"
-            class="gray"
-          >
-            📋 Copy
-          </button>
-
-          <button
-            id="regenerateRoomCode"
-            class="gray"
-          >
-            🔄 Đổi mã
-          </button>
-
-        </div>
-
-      </div>
-
-      <div style="margin-top:15px">
-
-        <div class="small">
-          Mật khẩu phòng
-        </div>
-
-        <div class="password-wrap">
-
-          <input
-            id="newRoomPassword"
-            class="code-input"
-            type="password"
-            readonly
-          >
-
-          <button
-            id="toggleNewPassword"
-            class="eye"
-            type="button"
-          >
-            👁
-          </button>
-
-        </div>
-
-        <div
-          class="row"
-          style="margin-top:9px"
-        >
-
-          <button
-            id="copyNewPassword"
-            class="gray"
-          >
-            📋 Copy mật khẩu
-          </button>
-
-          <button
-            id="regeneratePassword"
-            class="gray"
-          >
-            🔄 Mật khẩu mới
-          </button>
-
-        </div>
-
+        Mã phòng
       </div>
 
       <div
-        id="createStatus"
-        class="status"
-      ></div>
+        id="newRoomCode"
+        class="room-code"
+      >
+        ROOM-XXXXXX
+      </div>
 
       <div
         class="row"
-        style="margin-top:15px"
-      >
-
-        <button
-          id="confirmCreate"
-          class="green"
-        >
-          ✅ Tạo phòng này
-        </button>
-
-        <button
-          id="cancelCreate"
-          class="gray"
-        >
-          Hủy
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- ROOM -->
-
-  <div
-    id="roomUI"
-    class="hidden"
-  >
-
-    <div class="panel">
-
-      <div class="top-title">
-
-        <div class="row">
-
-          <span
-            id="roomBadge"
-            class="badge"
-          ></span>
-
-          <span
-            id="roomRole"
-            class="member"
-          ></span>
-
-        </div>
-
-        <button
-          id="leaveRoom"
-          class="gray"
-        >
-          ← Rời phòng
-        </button>
-
-      </div>
-
-      <div
-        id="roomInfo"
-        class="small"
-        style="margin-top:10px"
-      ></div>
-
-    </div>
-
-
-    <!-- PASSWORD -->
-
-    <div
-      id="passwordPanel"
-      class="panel"
-    >
-
-      <h3 style="margin-top:0">
-        🔐 Mật khẩu phòng
-      </h3>
-
-      <div class="small">
-        Nhập mật khẩu được Chủ phòng cấp.
-      </div>
-
-      <div
-        class="password-wrap"
         style="margin-top:12px"
       >
 
-        <input
-          id="joinPassword"
-          type="password"
-          placeholder="Mật khẩu phòng"
-          autocomplete="current-password"
+        <button
+          id="copyRoomCode"
+          class="gray"
         >
+          📋 Copy
+        </button>
 
         <button
-          id="toggleJoinPassword"
-          class="eye"
-          type="button"
+          id="regenerateRoomCode"
+          class="gray"
         >
-          👁
+          🔄 Đổi mã
         </button>
 
       </div>
-
-      <div
-        class="row"
-        style="margin-top:9px"
-      >
-
-        <button
-          id="verifyPassword"
-          class="blue"
-        >
-          🔓 Vào phòng
-        </button>
-
-      </div>
-
-      <div
-        id="verifyStatus"
-        class="status"
-      ></div>
 
     </div>
 
 
-    <!-- OWNER -->
-
-    <div
-      id="ownerPanel"
-      class="panel hidden"
-    >
-
-      <h3 style="margin-top:0">
-        👑 Quản lý phòng
-      </h3>
+    <div style="margin-top:15px">
 
       <div class="small">
-        Bạn là Chủ phòng.
+        Mật khẩu phòng
       </div>
-
-
-      <!-- CHANGE PASSWORD -->
-
-      <div class="divider"></div>
-
-      <h4 style="margin-bottom:8px">
-        ✏️ Đổi mật khẩu chính
-      </h4>
 
       <div class="password-wrap">
 
         <input
-          id="changeMainPassword"
+          id="newRoomPassword"
+          class="code-input"
           type="password"
-          placeholder="Mật khẩu mới"
-          autocomplete="new-password"
+          readonly
         >
 
         <button
-          id="toggleChangeMainPassword"
+          id="toggleNewPassword"
           class="eye"
           type="button"
         >
@@ -766,149 +567,357 @@ button:disabled{
       >
 
         <button
-          id="saveMainPassword"
-          class="green"
-        >
-          💾 Lưu mật khẩu mới
-        </button>
-
-      </div>
-
-
-      <!-- ADD PASSWORD -->
-
-      <div class="divider"></div>
-
-      <h4 style="margin-bottom:8px">
-        ➕ Thêm mật khẩu khác
-      </h4>
-
-      <div class="row">
-
-        <div
-          class="password-wrap"
-          style="flex:1"
-        >
-
-          <input
-            id="extraPassword"
-            type="password"
-            placeholder="Mật khẩu phụ"
-            autocomplete="new-password"
-          >
-
-          <button
-            id="toggleExtraPassword"
-            class="eye"
-            type="button"
-          >
-            👁
-          </button>
-
-        </div>
-
-        <button
-          id="randomExtraPassword"
+          id="copyNewPassword"
           class="gray"
         >
-          🔄 Tạo
+          📋 Copy mật khẩu
         </button>
 
         <button
-          id="addPassword"
-          class="blue"
+          id="regeneratePassword"
+          class="gray"
         >
-          + Thêm
+          🔄 Mật khẩu mới
         </button>
 
       </div>
-
-      <div
-        id="ownerStatus"
-        class="status"
-      ></div>
-
-
-      <!-- PASSWORD LIST -->
-
-      <div
-        id="passwordList"
-        class="password-list"
-      ></div>
 
     </div>
 
 
-    <!-- FILES -->
+    <div
+      id="createStatus"
+      class="status"
+    ></div>
+
 
     <div
-      id="fileArea"
-      class="hidden"
+      class="row"
+      style="margin-top:15px"
     >
 
-      <div class="panel">
-
-        <div
-          id="drop"
-          class="drop"
-        >
-
-          <b>
-            📤 Chọn hoặc kéo thả file
-          </b>
-
-          <br>
-
-          <span class="small">
-            File sẽ được lưu trực tiếp vào Firebase Storage.
-          </span>
-
-          <input
-            id="picker"
-            type="file"
-            multiple
-            hidden
-          >
-
-        </div>
-
-        <div
-          id="fileStatus"
-          class="status"
-        ></div>
-
-      </div>
-
-      <div
-        id="grid"
-        class="grid"
-      ></div>
-
-      <div
-        id="empty"
-        class="empty"
+      <button
+        id="confirmCreate"
+        class="green"
       >
-        Phòng chưa có file.
-      </div>
+        ✅ Tạo phòng này
+      </button>
+
+      <button
+        id="cancelCreate"
+        class="gray"
+      >
+        Hủy
+      </button>
 
     </div>
 
   </div>
 
+</div>
+
+
+<!-- ================================================= -->
+<!-- ROOM -->
+<!-- ================================================= -->
+
+<div
+  id="roomUI"
+  class="hidden"
+>
+
+  <div class="panel">
+
+    <div class="top-title">
+
+      <div class="row">
+
+        <span
+          id="roomBadge"
+          class="badge"
+        ></span>
+
+        <span
+          id="roomRole"
+          class="member"
+        ></span>
+
+      </div>
+
+      <button
+        id="leaveRoom"
+        class="gray"
+      >
+        ← Rời phòng
+      </button>
+
+    </div>
+
+    <div
+      id="roomInfo"
+      class="small"
+      style="margin-top:10px"
+    ></div>
+
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- PASSWORD -->
+  <!-- ================================================= -->
+
+  <div
+    id="passwordPanel"
+    class="panel"
+  >
+
+    <h3 style="margin-top:0">
+      🔐 Mật khẩu phòng
+    </h3>
+
+    <div class="small">
+      Nhập mật khẩu được Chủ phòng cấp.
+    </div>
+
+    <div
+      class="password-wrap"
+      style="margin-top:12px"
+    >
+
+      <input
+        id="joinPassword"
+        type="password"
+        placeholder="Mật khẩu phòng"
+        autocomplete="current-password"
+      >
+
+      <button
+        id="toggleJoinPassword"
+        class="eye"
+        type="button"
+      >
+        👁
+      </button>
+
+    </div>
+
+    <div
+      class="row"
+      style="margin-top:9px"
+    >
+
+      <button
+        id="verifyPassword"
+        class="blue"
+      >
+        🔓 Vào phòng
+      </button>
+
+    </div>
+
+    <div
+      id="verifyStatus"
+      class="status"
+    ></div>
+
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- OWNER -->
+  <!-- ================================================= -->
+
+  <div
+    id="ownerPanel"
+    class="panel hidden"
+  >
+
+    <h3 style="margin-top:0">
+      👑 Quản lý phòng
+    </h3>
+
+    <div class="small">
+      Bạn là Chủ phòng.
+    </div>
+
+
+    <div class="divider"></div>
+
+
+    <!-- CHANGE MAIN PASSWORD -->
+
+    <h4 style="margin-bottom:8px">
+      ✏️ Đổi mật khẩu chính
+    </h4>
+
+    <div class="password-wrap">
+
+      <input
+        id="changeMainPassword"
+        type="password"
+        placeholder="Mật khẩu mới"
+        autocomplete="new-password"
+      >
+
+      <button
+        id="toggleChangeMainPassword"
+        class="eye"
+        type="button"
+      >
+        👁
+      </button>
+
+    </div>
+
+    <div
+      class="row"
+      style="margin-top:9px"
+    >
+
+      <button
+        id="saveMainPassword"
+        class="green"
+      >
+        💾 Lưu mật khẩu mới
+      </button>
+
+    </div>
+
+
+    <div class="divider"></div>
+
+
+    <!-- ADD PASSWORD -->
+
+    <h4 style="margin-bottom:8px">
+      ➕ Thêm mật khẩu khác
+    </h4>
+
+    <div class="row">
+
+      <div
+        class="password-wrap"
+        style="flex:1"
+      >
+
+        <input
+          id="extraPassword"
+          type="password"
+          placeholder="Mật khẩu phụ"
+          autocomplete="new-password"
+        >
+
+        <button
+          id="toggleExtraPassword"
+          class="eye"
+          type="button"
+        >
+          👁
+        </button>
+
+      </div>
+
+      <button
+        id="randomExtraPassword"
+        class="gray"
+      >
+        🔄 Tạo
+      </button>
+
+      <button
+        id="addPassword"
+        class="blue"
+      >
+        + Thêm
+      </button>
+
+    </div>
+
+    <div
+      id="ownerStatus"
+      class="status"
+    ></div>
+
+    <div
+      id="passwordList"
+      class="password-list"
+    ></div>
+
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- FILE AREA -->
+  <!-- ================================================= -->
+
+  <div
+    id="fileArea"
+    class="hidden"
+  >
+
+    <div class="panel">
+
+      <div
+        id="drop"
+        class="drop"
+      >
+
+        <b>
+          📤 Chọn hoặc kéo thả file
+        </b>
+
+        <br>
+
+        <span class="small">
+          File được lưu vào Firebase Storage.
+        </span>
+
+        <input
+          id="picker"
+          type="file"
+          multiple
+          hidden
+        >
+
+      </div>
+
+      <div
+        id="fileStatus"
+        class="status"
+      ></div>
+
+    </div>
+
+    <div
+      id="grid"
+      class="grid"
+    ></div>
+
+    <div
+      id="empty"
+      class="empty"
+    >
+      Phòng chưa có file.
+    </div>
+
+  </div>
+
+</div>
+
 </main>
 
 
-<script type="module">
+<!-- ================================================= -->
+<!-- FIREBASE -->
+<!-- ================================================= -->
 
-/* =====================================================
-   FIREBASE IMPORTS
-===================================================== */
+<script type="module">
 
 import {
   initializeApp
-}
-from
+} from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
 
 import {
   getAuth,
@@ -916,34 +925,32 @@ import {
   signInWithPopup,
   signOut,
   onAuthStateChanged
-}
-from
+} from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
 
 import {
   getDatabase,
-  ref,
+  ref as dbRef,
   get,
   set,
-  update,
-  push
-}
-from
+  update
+} from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
 
 import {
   getStorage,
-  storageRef,
+  ref as storageRef,
   uploadBytes,
   getDownloadURL
-}
-from
+} from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 
-/* =====================================================
-   FIREBASE CONFIG CỦA BẠN
-===================================================== */
+/* =================================================
+   FIREBASE CONFIG
+================================================= */
 
 const firebaseConfig = {
 
@@ -974,9 +981,9 @@ const firebaseConfig = {
 };
 
 
-/* =====================================================
-   FIREBASE INIT
-===================================================== */
+/* =================================================
+   INITIALIZE
+================================================= */
 
 const app =
   initializeApp(firebaseConfig);
@@ -994,9 +1001,9 @@ const googleProvider =
   new GoogleAuthProvider();
 
 
-/* =====================================================
+/* =================================================
    STATE
-===================================================== */
+================================================= */
 
 let currentUser = null;
 
@@ -1006,23 +1013,19 @@ let currentRoomData = null;
 
 let roomUnlocked = false;
 
-let createRoomData = null;
 
+/* =================================================
+   RANDOM
+================================================= */
 
-/* =====================================================
-   HELPERS
-===================================================== */
-
-const $ =
-  id => document.getElementById(id);
-
-
-function randomChars(length){
+function randomChars(
+  length
+){
 
   const chars =
     "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-  let out = "";
+  let output = "";
 
   for(
     let i = 0;
@@ -1030,7 +1033,7 @@ function randomChars(length){
     i++
   ){
 
-    out +=
+    output +=
       chars[
         Math.floor(
           Math.random() *
@@ -1040,12 +1043,12 @@ function randomChars(length){
 
   }
 
-  return out;
+  return output;
 
 }
 
 
-function generateRoomCode(){
+function makeRoomCode(){
 
   return "ROOM-" +
     randomChars(6);
@@ -1053,7 +1056,7 @@ function generateRoomCode(){
 }
 
 
-function generatePassword(){
+function makePassword(){
 
   return (
     randomChars(4) +
@@ -1064,15 +1067,65 @@ function generatePassword(){
 }
 
 
-function formatSize(bytes){
+function makeId(){
+
+  return (
+    Date.now().toString(36) +
+    "-" +
+    Math.random()
+      .toString(36)
+      .slice(2,10)
+  );
+
+}
+
+
+async function sha256(
+  value
+){
+
+  const data =
+    new TextEncoder()
+      .encode(value);
+
+  const hash =
+    await crypto.subtle.digest(
+      "SHA-256",
+      data
+    );
+
+  return Array
+    .from(
+      new Uint8Array(hash)
+    )
+    .map(
+      byte =>
+        byte
+          .toString(16)
+          .padStart(2,"0")
+    )
+    .join("");
+
+}
+
+
+function formatSize(
+  bytes
+){
 
   if(!bytes)
     return "0 B";
 
   const units =
-    ["B","KB","MB","GB","TB"];
+    [
+      "B",
+      "KB",
+      "MB",
+      "GB",
+      "TB"
+    ];
 
-  const i =
+  const index =
     Math.min(
       4,
       Math.floor(
@@ -1083,49 +1136,40 @@ function formatSize(bytes){
 
   return (
     bytes /
-    1024 ** i
+    1024 ** index
   ).toFixed(
-    i ? 1 : 0
+    index ? 1 : 0
   )
   + " "
-  + units[i];
+  + units[index];
 
 }
 
 
-function makeId(){
+function togglePassword(
+  input,
+  button
+){
 
-  return (
-    Date.now().toString(36) +
-    Math.random()
-      .toString(36)
-      .slice(2,8)
-  );
+  if(
+    input.type === "password"
+  ){
 
-}
+    input.type =
+      "text";
 
+    button.textContent =
+      "🙈";
 
-async function sha256(text){
+  }else{
 
-  const data =
-    new TextEncoder()
-      .encode(text);
+    input.type =
+      "password";
 
-  const hash =
-    await crypto.subtle.digest(
-      "SHA-256",
-      data
-    );
+    button.textContent =
+      "👁";
 
-  return [
-    ...new Uint8Array(hash)
-  ]
-    .map(
-      b =>
-        b.toString(16)
-          .padStart(2,"0")
-    )
-    .join("");
+  }
 
 }
 
@@ -1166,65 +1210,148 @@ async function copyText(
 }
 
 
-function togglePassword(
-  input,
-  button
-){
-
-  if(
-    input.type === "password"
-  ){
-
-    input.type =
-      "text";
-
-    button.textContent =
-      "🙈";
-
-  }else{
-
-    input.type =
-      "password";
-
-    button.textContent =
-      "👁";
-
-  }
-
-}
-
-
-/* =====================================================
-   AUTH
-===================================================== */
+/* =================================================
+   GOOGLE LOGIN
+================================================= */
 
 $("googleLogin").onclick =
 async () => {
 
-  $("loginStatus").textContent =
+  const button =
+    $("googleLogin");
+
+  const status =
+    $("loginStatus");
+
+
+  button.disabled =
+    true;
+
+  status.textContent =
     "🔐 Đang mở Google...";
+
 
   try{
 
-    await signInWithPopup(
-      auth,
-      googleProvider
-    );
+    const result =
+      await signInWithPopup(
+        auth,
+        googleProvider
+      );
+
+
+    const user =
+      result.user;
+
+
+    status.textContent =
+      "✅ Xin chào " +
+      (
+        user.displayName ||
+        user.email ||
+        "Bạn"
+      );
+
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "GOOGLE LOGIN ERROR:",
+      error
+    );
 
-    $("loginStatus").textContent =
+
+    status.textContent =
       "❌ " +
-      error.code +
+      (
+        error.code ||
+        "LOGIN_ERROR"
+      ) +
       "\n" +
       error.message;
+
+  }finally{
+
+    button.disabled =
+      false;
 
   }
 
 };
 
+
+/* =================================================
+   AUTH STATE
+================================================= */
+
+onAuthStateChanged(
+  auth,
+  user => {
+
+    currentUser =
+      user;
+
+
+    if(user){
+
+      $("loginPanel")
+        .classList
+        .add("hidden");
+
+      $("home")
+        .classList
+        .remove("hidden");
+
+      $("userBox")
+        .classList
+        .remove("hidden");
+
+
+      $("userName").textContent =
+        user.displayName ||
+        user.email ||
+        "Google User";
+
+
+      if(user.photoURL){
+
+        $("avatar").src =
+          user.photoURL;
+
+      }else{
+
+        $("avatar").src =
+          "";
+
+      }
+
+    }else{
+
+      $("loginPanel")
+        .classList
+        .remove("hidden");
+
+      $("home")
+        .classList
+        .add("hidden");
+
+      $("userBox")
+        .classList
+        .add("hidden");
+
+      $("roomUI")
+        .classList
+        .add("hidden");
+
+    }
+
+  }
+);
+
+
+/* =================================================
+   LOGOUT
+================================================= */
 
 $("logout").onclick =
 async () => {
@@ -1242,86 +1369,40 @@ async () => {
 };
 
 
-onAuthStateChanged(
-  auth,
-  user => {
-
-    currentUser =
-      user;
-
-    if(user){
-
-      $("loginPanel")
-        .classList
-        .add("hidden");
-
-      $("userBox")
-        .classList
-        .remove("hidden");
-
-      $("home")
-        .classList
-        .remove("hidden");
-
-      $("avatar").src =
-        user.photoURL || "";
-
-      $("userName").textContent =
-        user.displayName ||
-        user.email ||
-        "Google User";
-
-    }else{
-
-      $("loginPanel")
-        .classList
-        .remove("hidden");
-
-      $("userBox")
-        .classList
-        .add("hidden");
-
-      $("home")
-        .classList
-        .add("hidden");
-
-      $("roomUI")
-        .classList
-        .add("hidden");
-
-    }
-
-  }
-);
-
-
-/* =====================================================
+/* =================================================
    CREATE ROOM UI
-===================================================== */
+================================================= */
 
-function prepareCreateRoom(){
+let generatedRoom =
+"";
 
-  createRoomData = {
+let generatedPassword =
+"";
 
-    room:
-      generateRoomCode(),
 
-    password:
-      generatePassword()
+function prepareCreate(){
 
-  };
+  generatedRoom =
+    makeRoomCode();
+
+  generatedPassword =
+    makePassword();
+
 
   $("newRoomCode")
     .textContent =
-    createRoomData.room;
+    generatedRoom;
+
 
   $("newRoomPassword")
     .value =
-    createRoomData.password;
+    generatedPassword;
+
 
   $("newRoomPassword")
     .type =
     "password";
+
 
   $("toggleNewPassword")
     .textContent =
@@ -1337,7 +1418,7 @@ $("createRoomBtn").onclick =
     .classList
     .remove("hidden");
 
-  prepareCreateRoom();
+  prepareCreate();
 
 };
 
@@ -1355,12 +1436,12 @@ $("cancelCreate").onclick =
 $("regenerateRoomCode").onclick =
 () => {
 
-  createRoomData.room =
-    generateRoomCode();
+  generatedRoom =
+    makeRoomCode();
 
   $("newRoomCode")
     .textContent =
-    createRoomData.room;
+    generatedRoom;
 
 };
 
@@ -1368,12 +1449,12 @@ $("regenerateRoomCode").onclick =
 $("regeneratePassword").onclick =
 () => {
 
-  createRoomData.password =
-    generatePassword();
+  generatedPassword =
+    makePassword();
 
   $("newRoomPassword")
     .value =
-    createRoomData.password;
+    generatedPassword;
 
 };
 
@@ -1382,8 +1463,7 @@ $("copyRoomCode").onclick =
 () => {
 
   copyText(
-    $("newRoomCode")
-      .textContent,
+    generatedRoom,
     $("copyRoomCode")
   );
 
@@ -1394,8 +1474,7 @@ $("copyNewPassword").onclick =
 () => {
 
   copyText(
-    $("newRoomPassword")
-      .value,
+    generatedPassword,
     $("copyNewPassword")
   );
 
@@ -1413,9 +1492,9 @@ $("toggleNewPassword").onclick =
 };
 
 
-/* =====================================================
-   CREATE ROOM IN REAL FIREBASE
-===================================================== */
+/* =================================================
+   CREATE ROOM IN FIREBASE
+================================================= */
 
 $("confirmCreate").onclick =
 async () => {
@@ -1430,15 +1509,9 @@ async () => {
   }
 
 
-  if(!createRoomData){
-
-    prepareCreateRoom();
-
-  }
-
-
   $("confirmCreate")
     .disabled = true;
+
 
   $("createStatus").textContent =
     "🚀 Đang tạo phòng...";
@@ -1446,49 +1519,56 @@ async () => {
 
   try{
 
-    let roomCode =
-      createRoomData.room;
-
-    let roomRef =
-      ref(
-        db,
-        "rooms/" +
-        roomCode
-      );
-
-    let exists =
-      await get(roomRef);
-
-
     /*
-      Tránh trùng mã phòng.
+      Kiểm tra trùng mã.
+      Nếu trùng thì tự sinh mã khác.
     */
 
-    while(exists.exists()){
+    let code =
+      generatedRoom;
 
-      roomCode =
-        generateRoomCode();
+    let roomReference =
+      dbRef(
+        db,
+        "rooms/" +
+        code
+      );
 
-      roomRef =
-        ref(
+    let existing =
+      await get(
+        roomReference
+      );
+
+
+    while(existing.exists()){
+
+      code =
+        makeRoomCode();
+
+      roomReference =
+        dbRef(
           db,
           "rooms/" +
-          roomCode
+          code
         );
 
-      exists =
-        await get(roomRef);
+      existing =
+        await get(
+          roomReference
+        );
 
     }
 
 
     const password =
-      createRoomData.password;
+      generatedPassword;
+
 
     const passwordHash =
       await sha256(password);
 
-    const createdAt =
+
+    const now =
       Date.now();
 
 
@@ -1500,9 +1580,10 @@ async () => {
       ownerName:
         currentUser.displayName ||
         currentUser.email ||
-        "User",
+        "Google User",
 
-      createdAt,
+      createdAt:
+        now,
 
       passwords:{
 
@@ -1511,13 +1592,15 @@ async () => {
           hash:
             passwordHash,
 
-          createdAt
+          createdAt:
+            now
 
         }
 
       },
 
-      passwordCount:1,
+      passwordCount:
+        1,
 
       files:{}
 
@@ -1525,13 +1608,17 @@ async () => {
 
 
     await set(
-      roomRef,
+      roomReference,
       roomData
     );
 
 
+    /*
+      Thành công
+    */
+
     currentRoom =
-      roomCode;
+      code;
 
     currentRoomData =
       roomData;
@@ -1541,7 +1628,7 @@ async () => {
 
 
     $("roomInput").value =
-      roomCode;
+      code;
 
 
     $("createPanel")
@@ -1550,24 +1637,28 @@ async () => {
 
 
     $("createStatus").textContent =
-      "✅ Đã tạo phòng " +
-      roomCode;
+      "✅ Tạo phòng thành công.";
 
 
-    alert(
-      "Tạo phòng thành công!\n\n" +
-      "Mã phòng: " +
-      roomCode +
-      "\n" +
-      "Mật khẩu: " +
+    /*
+      Hiện thông tin cho chủ phòng
+    */
+
+    await showRoom(
+      code,
+      roomData,
+      true,
       password
     );
 
 
-    await showRoom(
-      roomCode,
-      roomData,
-      true
+    alert(
+      "🎉 Tạo phòng thành công!\n\n" +
+      "Mã phòng: " +
+      code +
+      "\n" +
+      "Mật khẩu: " +
+      password
     );
 
 
@@ -1593,9 +1684,9 @@ async () => {
 };
 
 
-/* =====================================================
-   FIND ROOM
-===================================================== */
+/* =================================================
+   JOIN ROOM
+================================================= */
 
 $("joinRoomBtn").onclick =
 async () => {
@@ -1606,13 +1697,14 @@ async () => {
       .trim()
       .toUpperCase();
 
+
   if(
-    !code ||
-    code.length < 3
+    !/^[A-Z0-9_-]{3,32}$/
+      .test(code)
   ){
 
     $("homeStatus").textContent =
-      "❌ Nhập mã phòng.";
+      "❌ Mã phòng không hợp lệ.";
 
     return;
 
@@ -1625,9 +1717,9 @@ async () => {
 
   try{
 
-    const roomSnap =
+    const snapshot =
       await get(
-        ref(
+        dbRef(
           db,
           "rooms/" +
           code
@@ -1635,11 +1727,10 @@ async () => {
       );
 
 
-    if(!roomSnap.exists()){
+    if(!snapshot.exists()){
 
       $("homeStatus").textContent =
-        "❌ Không tìm thấy phòng " +
-        code;
+        "❌ Không tìm thấy phòng.";
 
       return;
 
@@ -1649,15 +1740,18 @@ async () => {
     $("homeStatus").textContent =
       "";
 
+
     await showRoom(
       code,
-      roomSnap.val(),
+      snapshot.val(),
       false
     );
+
 
   }catch(error){
 
     console.error(error);
+
 
     $("homeStatus").textContent =
       "❌ " +
@@ -1682,14 +1776,15 @@ event => {
 };
 
 
-/* =====================================================
+/* =================================================
    SHOW ROOM
-===================================================== */
+================================================= */
 
 async function showRoom(
   code,
   data,
-  owner
+  owner = false,
+  plainPassword = ""
 ){
 
   currentRoom =
@@ -1699,7 +1794,7 @@ async function showRoom(
     data;
 
   roomUnlocked =
-    owner === true;
+    owner;
 
 
   $("roomUI")
@@ -1711,6 +1806,22 @@ async function showRoom(
     code;
 
 
+  $("passwordPanel")
+    .classList
+    .toggle(
+      "hidden",
+      owner
+    );
+
+
+  $("fileArea")
+    .classList
+    .toggle(
+      "hidden",
+      !owner
+    );
+
+
   if(owner){
 
     $("roomRole").textContent =
@@ -1719,18 +1830,44 @@ async function showRoom(
     $("roomRole").className =
       "owner";
 
+
     $("roomInfo").textContent =
       "Bạn là người tạo phòng này.";
+
 
     $("ownerPanel")
       .classList
       .remove("hidden");
 
 
-    renderPasswords(
+    $("changeMainPassword")
+      .value = "";
+
+
+    $("passwordList")
+      .innerHTML = "";
+
+
+    if(plainPassword){
+
+      $("ownerStatus").textContent =
+        "🔑 Mật khẩu hiện tại: " +
+        plainPassword;
+
+    }else{
+
+      $("ownerStatus").textContent =
+        "Bạn có toàn quyền quản lý mật khẩu.";
+
+    }
+
+
+    renderPasswordList(
       data.passwords || {}
     );
 
+
+    await loadFiles();
 
   }else{
 
@@ -1740,33 +1877,14 @@ async function showRoom(
     $("roomRole").className =
       "member";
 
+
     $("roomInfo").textContent =
-      "Nhập mật khẩu để truy cập phòng.";
+      "Nhập mật khẩu phòng để truy cập.";
+
 
     $("ownerPanel")
       .classList
       .add("hidden");
-
-  }
-
-
-  $("passwordPanel")
-    .classList
-    .toggle(
-      "hidden",
-      roomUnlocked
-    );
-
-
-  if(roomUnlocked){
-
-    $("fileArea")
-      .classList
-      .remove("hidden");
-
-    await loadFiles();
-
-  }else{
 
     $("fileArea")
       .classList
@@ -1777,9 +1895,9 @@ async function showRoom(
 }
 
 
-/* =====================================================
-   VERIFY PASSWORD
-===================================================== */
+/* =================================================
+   VERIFY ROOM PASSWORD
+================================================= */
 
 $("verifyPassword").onclick =
 async () => {
@@ -1792,7 +1910,7 @@ async () => {
   if(!password){
 
     $("verifyStatus").textContent =
-      "❌ Nhập mật khẩu.";
+      "❌ Hãy nhập mật khẩu.";
 
     return;
 
@@ -1805,9 +1923,9 @@ async () => {
 
   try{
 
-    const snap =
+    const snapshot =
       await get(
-        ref(
+        dbRef(
           db,
           "rooms/" +
           currentRoom
@@ -1815,7 +1933,7 @@ async () => {
       );
 
 
-    if(!snap.exists()){
+    if(!snapshot.exists()){
 
       throw new Error(
         "Phòng không tồn tại."
@@ -1824,15 +1942,16 @@ async () => {
     }
 
 
-    currentRoomData =
-      snap.val();
+    const data =
+      snapshot.val();
 
 
     const hash =
       await sha256(password);
 
+
     const passwords =
-      currentRoomData.passwords ||
+      data.passwords ||
       {};
 
 
@@ -1840,8 +1959,9 @@ async () => {
       Object
         .values(passwords)
         .some(
-          item =>
-            item.hash === hash
+          passwordData =>
+            passwordData &&
+            passwordData.hash === hash
         );
 
 
@@ -1854,6 +1974,9 @@ async () => {
 
     }
 
+
+    currentRoomData =
+      data;
 
     roomUnlocked =
       true;
@@ -1880,6 +2003,7 @@ async () => {
 
     console.error(error);
 
+
     $("verifyStatus").textContent =
       "❌ " +
       error.message;
@@ -1889,9 +2013,9 @@ async () => {
 };
 
 
-/* =====================================================
+/* =================================================
    PASSWORD EYES
-===================================================== */
+================================================= */
 
 $("toggleJoinPassword").onclick =
 () => {
@@ -1926,12 +2050,19 @@ $("toggleExtraPassword").onclick =
 };
 
 
-/* =====================================================
+/* =================================================
    CHANGE MAIN PASSWORD
-===================================================== */
+================================================= */
 
 $("saveMainPassword").onclick =
 async () => {
+
+  if(
+    !currentUser ||
+    !currentRoom
+  )
+    return;
+
 
   const password =
     $("changeMainPassword")
@@ -1954,29 +2085,28 @@ async () => {
 
   try{
 
-    const hash =
-      await sha256(password);
-
-
-    const roomRef =
-      ref(
+    const roomReference =
+      dbRef(
         db,
         "rooms/" +
         currentRoom
       );
 
 
-    const snap =
-      await get(roomRef);
+    const snapshot =
+      await get(
+        roomReference
+      );
 
-    if(!snap.exists())
+
+    if(!snapshot.exists())
       throw new Error(
         "Phòng không tồn tại."
       );
 
 
     const data =
-      snap.val();
+      snapshot.val();
 
 
     if(
@@ -1996,16 +2126,13 @@ async () => {
       {};
 
 
-    /*
-      Giữ các mật khẩu phụ,
-      chỉ thay mật khẩu chính.
-    */
-
     passwords.main = {
 
-      hash,
+      hash:
+        await sha256(password),
 
       createdAt:
+        passwords.main?.createdAt ||
         Date.now(),
 
       updatedAt:
@@ -2015,9 +2142,10 @@ async () => {
 
 
     await update(
-      roomRef,
+      roomReference,
       {
         passwords,
+
         passwordCount:
           Object.keys(passwords)
             .length
@@ -2039,8 +2167,7 @@ async () => {
     $("ownerStatus").textContent =
       "✅ Đã đổi mật khẩu chính.";
 
-
-    renderPasswords(
+    renderPasswordList(
       passwords
     );
 
@@ -2048,6 +2175,7 @@ async () => {
   }catch(error){
 
     console.error(error);
+
 
     $("ownerStatus").textContent =
       "❌ " +
@@ -2058,15 +2186,15 @@ async () => {
 };
 
 
-/* =====================================================
+/* =================================================
    RANDOM EXTRA PASSWORD
-===================================================== */
+================================================= */
 
 $("randomExtraPassword").onclick =
 () => {
 
   $("extraPassword").value =
-    generatePassword();
+    makePassword();
 
   $("extraPassword").type =
     "text";
@@ -2078,9 +2206,9 @@ $("randomExtraPassword").onclick =
 };
 
 
-/* =====================================================
+/* =================================================
    ADD EXTRA PASSWORD
-===================================================== */
+================================================= */
 
 $("addPassword").onclick =
 async () => {
@@ -2106,26 +2234,28 @@ async () => {
 
   try{
 
-    const roomRef =
-      ref(
+    const roomReference =
+      dbRef(
         db,
         "rooms/" +
         currentRoom
       );
 
 
-    const snap =
-      await get(roomRef);
+    const snapshot =
+      await get(
+        roomReference
+      );
 
 
-    if(!snap.exists())
+    if(!snapshot.exists())
       throw new Error(
         "Phòng không tồn tại."
       );
 
 
     const data =
-      snap.val();
+      snapshot.val();
 
 
     if(
@@ -2164,7 +2294,7 @@ async () => {
 
 
     await update(
-      roomRef,
+      roomReference,
       {
         passwords,
 
@@ -2175,6 +2305,18 @@ async () => {
     );
 
 
+    $("extraPassword")
+      .value = "";
+
+
+    $("extraPassword").type =
+      "password";
+
+    $("toggleExtraPassword")
+      .textContent =
+      "👁";
+
+
     currentRoomData =
       {
         ...data,
@@ -2182,31 +2324,18 @@ async () => {
       };
 
 
-    $("extraPassword")
-      .value = "";
-
-
-    $("extraPassword")
-      .type = "password";
-
-
-    $("toggleExtraPassword")
-      .textContent =
-      "👁";
+    renderPasswordList(
+      passwords
+    );
 
 
     $("ownerStatus").textContent =
       "✅ Đã thêm mật khẩu.";
 
-
-    renderPasswords(
-      passwords
-    );
-
-
   }catch(error){
 
     console.error(error);
+
 
     $("ownerStatus").textContent =
       "❌ " +
@@ -2217,11 +2346,11 @@ async () => {
 };
 
 
-/* =====================================================
-   RENDER PASSWORDS
-===================================================== */
+/* =================================================
+   RENDER PASSWORD LIST
+================================================= */
 
-function renderPasswords(
+function renderPasswordList(
   passwords
 ){
 
@@ -2239,24 +2368,12 @@ function renderPasswords(
     );
 
 
-  if(entries.length <= 1){
-
-    box.innerHTML =
-      `<div class="small">
-        Chưa có mật khẩu phụ.
-      </div>`;
-
-    return;
-
-  }
-
+  /*
+    Mật khẩu chính chỉ hiện nhãn.
+  */
 
   entries.forEach(
     ([id,data]) => {
-
-      /*
-        Không hiển thị hash thật.
-      */
 
       if(id === "main")
         return;
@@ -2276,6 +2393,9 @@ function renderPasswords(
           "div"
         );
 
+      left.className =
+        "password-left";
+
 
       const title =
         document.createElement(
@@ -2287,7 +2407,10 @@ function renderPasswords(
 
       title.textContent =
         "🔑 " +
-        (data.label || "Mật khẩu phụ");
+        (
+          data.label ||
+          "Mật khẩu phụ"
+        );
 
 
       const mask =
@@ -2308,24 +2431,24 @@ function renderPasswords(
       );
 
 
-      const remove =
+      const deleteButton =
         document.createElement(
           "button"
         );
 
-      remove.className =
+      deleteButton.className =
         "red";
 
-      remove.textContent =
+      deleteButton.textContent =
         "Xóa";
 
 
-      remove.onclick =
+      deleteButton.onclick =
       async () => {
 
         if(
           !confirm(
-            "Xóa mật khẩu này?"
+            "Bạn chắc chắn muốn xóa mật khẩu này?"
           )
         )
           return;
@@ -2333,26 +2456,30 @@ function renderPasswords(
 
         try{
 
-          const snap =
-            await get(
-              ref(
-                db,
-                "rooms/" +
-                currentRoom
-              )
+          const roomReference =
+            dbRef(
+              db,
+              "rooms/" +
+              currentRoom
             );
 
 
-          if(!snap.exists())
+          const snapshot =
+            await get(
+              roomReference
+            );
+
+
+          if(!snapshot.exists())
             return;
 
 
-          const data =
-            snap.val();
+          const roomData =
+            snapshot.val();
 
 
           if(
-            data.ownerUid !==
+            roomData.ownerUid !==
             currentUser.uid
           ){
 
@@ -2365,39 +2492,43 @@ function renderPasswords(
           }
 
 
-          const passwords =
-            data.passwords ||
+          const list =
+            roomData.passwords ||
             {};
 
 
-          delete passwords[id];
+          delete list[id];
+
+
+          /*
+            Luôn giữ mật khẩu main.
+          */
+
+          if(!list.main){
+
+            alert(
+              "Không thể xóa mật khẩu chính."
+            );
+
+            return;
+
+          }
 
 
           await update(
-            ref(
-              db,
-              "rooms/" +
-              currentRoom
-            ),
+            roomReference,
             {
-              passwords,
+              passwords:list,
 
               passwordCount:
-                Object.keys(passwords)
+                Object.keys(list)
                   .length
             }
           );
 
 
-          currentRoomData =
-            {
-              ...data,
-              passwords
-            };
-
-
-          renderPasswords(
-            passwords
+          renderPasswordList(
+            list
           );
 
 
@@ -2418,7 +2549,7 @@ function renderPasswords(
 
       item.append(
         left,
-        remove
+        deleteButton
       );
 
 
@@ -2429,14 +2560,30 @@ function renderPasswords(
     }
   );
 
+
+  if(
+    entries.length <= 1
+  ){
+
+    box.innerHTML +=
+      `<div class="small">
+        Chưa có mật khẩu phụ.
+      </div>`;
+
+  }
+
 }
 
 
-/* =====================================================
+/* =================================================
    LOAD FILES
-===================================================== */
+================================================= */
 
 async function loadFiles(){
+
+  if(!currentRoom)
+    return;
+
 
   $("empty").textContent =
     "☁ Đang tải file...";
@@ -2444,9 +2591,9 @@ async function loadFiles(){
 
   try{
 
-    const snap =
+    const snapshot =
       await get(
-        ref(
+        dbRef(
           db,
           "rooms/" +
           currentRoom +
@@ -2455,7 +2602,7 @@ async function loadFiles(){
       );
 
 
-    if(!snap.exists()){
+    if(!snapshot.exists()){
 
       renderFiles([]);
 
@@ -2465,16 +2612,16 @@ async function loadFiles(){
 
 
     const data =
-      snap.val();
+      snapshot.val();
 
 
     const list =
       Object.entries(data)
         .map(
-          ([id,item]) =>
+          ([id,file]) =>
             ({
               id,
-              ...item
+              ...file
             })
         )
         .sort(
@@ -2502,9 +2649,9 @@ async function loadFiles(){
 }
 
 
-/* =====================================================
+/* =================================================
    RENDER FILES
-===================================================== */
+================================================= */
 
 function renderFiles(
   list
@@ -2512,7 +2659,6 @@ function renderFiles(
 
   const grid =
     $("grid");
-
 
   grid.innerHTML =
     "";
@@ -2570,13 +2716,13 @@ function renderFiles(
 
         preview.innerHTML =
           `<img
-             src="${file.url}"
-             loading="lazy"
-             alt=""
-           >`;
+            src="${file.url}"
+            loading="lazy"
+            alt=""
+          >`;
 
-      }else
-      if(
+      }
+      else if(
         type.startsWith(
           "video/"
         )
@@ -2584,24 +2730,24 @@ function renderFiles(
 
         preview.innerHTML =
           `<video
-             src="${file.url}"
-             controls
-             preload="metadata">
-           </video>`;
+            src="${file.url}"
+            controls
+            preload="metadata">
+          </video>`;
 
-      }else
-      if(
+      }
+      else if(
         type ===
         "application/pdf"
       ){
 
         preview.innerHTML =
           `<iframe
-             src="${file.url}">
-           </iframe>`;
+            src="${file.url}">
+          </iframe>`;
 
-      }else
-      if(
+      }
+      else if(
         type.startsWith(
           "audio/"
         )
@@ -2609,23 +2755,22 @@ function renderFiles(
 
         preview.innerHTML =
           `<div style="width:100%;padding:15px">
-             <div
-               class="ico"
-               style="text-align:center">
-               🎵
-             </div>
-             <audio
-               src="${file.url}"
-               controls>
-             </audio>
-           </div>`;
+            <div
+              class="ico"
+              style="text-align:center">
+              🎵
+            </div>
+            <audio
+              src="${file.url}"
+              controls>
+            </audio>
+          </div>`;
 
-      }else{
+      }
+      else{
 
         preview.innerHTML =
-          `<div class="ico">
-             📄
-           </div>`;
+          `<div class="ico">📄</div>`;
 
       }
 
@@ -2747,13 +2892,33 @@ function renderFiles(
 }
 
 
-/* =====================================================
+/* =================================================
    UPLOAD
-===================================================== */
+================================================= */
 
 async function uploadFile(
   file
 ){
+
+  if(!currentUser){
+
+    $("fileStatus").textContent =
+      "❌ Bạn chưa đăng nhập.";
+
+    return;
+
+  }
+
+
+  if(!currentRoom){
+
+    $("fileStatus").textContent =
+      "❌ Chưa chọn phòng.";
+
+    return;
+
+  }
+
 
   if(!roomUnlocked){
 
@@ -2773,16 +2938,16 @@ async function uploadFile(
 
   try{
 
+    const fileId =
+      makeId();
+
+
     const safeName =
       file.name
         .replace(
           /[^\w.\- ]/g,
           "_"
         );
-
-
-    const fileId =
-      makeId();
 
 
     const path =
@@ -2794,7 +2959,12 @@ async function uploadFile(
       safeName;
 
 
-    const fileRef =
+    /*
+      QUAN TRỌNG:
+      ref của Storage phải dùng alias storageRef.
+    */
+
+    const fileReference =
       storageRef(
         storage,
         path
@@ -2803,7 +2973,7 @@ async function uploadFile(
 
     const snapshot =
       await uploadBytes(
-        fileRef,
+        fileReference,
         file,
         {
           contentType:
@@ -2846,7 +3016,7 @@ async function uploadFile(
 
 
     await set(
-      ref(
+      dbRef(
         db,
         "rooms/" +
         currentRoom +
@@ -2882,9 +3052,9 @@ async function uploadFile(
 }
 
 
-/* =====================================================
+/* =================================================
    PICKER
-===================================================== */
+================================================= */
 
 $("picker").onchange =
 event => {
@@ -2909,6 +3079,10 @@ $("drop").onclick =
 
 };
 
+
+/* =================================================
+   DRAG & DROP
+================================================= */
 
 $("drop").ondragover =
 event => {
@@ -2943,9 +3117,7 @@ event => {
 
 
   [
-    ...event
-      .dataTransfer
-      .files
+    ...event.dataTransfer.files
   ].forEach(
     uploadFile
   );
@@ -2953,15 +3125,17 @@ event => {
 };
 
 
-/* =====================================================
-   LEAVE ROOM
-===================================================== */
+/* =================================================
+   LEAVE
+================================================= */
 
 $("leaveRoom").onclick =
 () => {
 
   currentRoom = "";
+
   currentRoomData = null;
+
   roomUnlocked = false;
 
 
@@ -2980,11 +3154,71 @@ $("leaveRoom").onclick =
     .add("hidden");
 
 
+  $("passwordPanel")
+    .classList
+    .remove("hidden");
+
+
   $("joinPassword")
     .value = "";
 
+
   $("roomInput")
     .value = "";
+
+};
+
+
+/* =================================================
+   ENTER PASSWORD WITH ENTER
+================================================= */
+
+$("joinPassword").onkeydown =
+event => {
+
+  if(
+    event.key === "Enter"
+  ){
+
+    $("verifyPassword").click();
+
+  }
+
+};
+
+
+/* =================================================
+   ENTER CHANGE PASSWORD WITH ENTER
+================================================= */
+
+$("changeMainPassword").onkeydown =
+event => {
+
+  if(
+    event.key === "Enter"
+  ){
+
+    $("saveMainPassword").click();
+
+  }
+
+};
+
+
+/* =================================================
+   ENTER EXTRA PASSWORD WITH ENTER
+================================================= */
+
+$("extraPassword").onkeydown =
+event => {
+
+  if(
+    event.key === "Enter"
+  ){
+
+    $("addPassword").click();
+
+  }
 
 };
 
