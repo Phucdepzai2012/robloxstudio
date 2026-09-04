@@ -1,276 +1,194 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>UNLIMITED DRIVE</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temporary Drive — P2P</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-body{background:#f8f9fa;color:#202124;padding:20px}
-.drive-container{max-width:1050px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.08);padding:24px}
-.header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #f1f3f4;padding-bottom:16px;margin-bottom:20px}
-.logo{font-size:22px;font-weight:800;color:#1a73e8}.badge{background:#e8f0fe;color:#1a73e8;font-size:12px;padding:5px 10px;border-radius:12px;font-weight:700}
-.upload-zone{border:2px dashed #1a73e8;background:#f8faff;border-radius:12px;padding:30px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:18px}
-.upload-zone.drag{background:#e8f0fe}.upload-icon{font-size:40px;margin-bottom:8px}.upload-text{font-size:16px;font-weight:600}.upload-sub{font-size:13px;color:#70757a;margin-top:5px}
-.status{display:none;margin-bottom:18px;padding:12px;border-radius:8px;font-size:14px;font-weight:600;text-align:center;background:#e8f0fe;color:#1a73e8}.status.show{display:block}.status.error{background:#fce8e6;color:#c5221f}
-.controls{display:flex;gap:10px;margin-bottom:18px}.search{flex:1;padding:11px 15px;border:1px solid #dadce0;border-radius:8px;outline:none;font-size:14px}.search:focus{border-color:#1a73e8}
-.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}.file-card{border:1px solid #dadce0;border-radius:10px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:10px;min-width:0}.file-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.1);border-color:#1a73e8}
-.file-preview{width:100%;height:150px;border-radius:7px;background:#f1f3f4;display:flex;align-items:center;justify-content:center;overflow:hidden}.file-preview img,.file-preview video{width:100%;height:100%;object-fit:cover}.file-preview iframe{width:100%;height:100%;border:0}.file-icon{font-size:48px}
-.file-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-date{font-size:11px;color:#70757a}
-.file-actions{display:flex;gap:8px}.btn{flex:1;border:none;padding:9px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none}.download{background:#1a73e8;color:#fff}.copy{background:#f1f3f4;color:#3c4043}.delete{background:#fce8e6;color:#c5221f}
-.progress-wrap{display:none;margin-bottom:18px}.progress-item{background:#fff;border:1px solid #dadce0;border-radius:10px;padding:12px;margin-bottom:8px}.progress-top{display:flex;justify-content:space-between;gap:10px;font-size:13px}.progress-bar{height:7px;background:#eceff1;border-radius:99px;overflow:hidden;margin-top:8px}.progress-bar div{width:0;height:100%;background:#34a853;transition:width .12s}.progress-state{font-size:12px;color:#70757a;margin-top:6px}
-.empty{text-align:center;color:#70757a;padding:60px 10px}
-@media(max-width:650px){body{padding:8px}.drive-container{padding:14px}.header{align-items:flex-start;gap:8px;flex-direction:column}}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,system-ui,sans-serif;background:#f6f8fc;color:#202124}
+header{height:64px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:14px;padding:0 20px;position:sticky;top:0;z-index:5}
+.logo{font-weight:800;font-size:21px;color:#1a73e8}.sub{font-size:12px;color:#6b7280}
+main{max-width:1100px;margin:auto;padding:20px}
+.panel{background:#fff;border:1px solid #e1e5ea;border-radius:14px;padding:16px;margin-bottom:15px}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+button,input{font:inherit}.btn{border:0;border-radius:10px;padding:11px 15px;cursor:pointer}.primary{background:#1a73e8;color:#fff}.gray{background:#eef1f5}.red{background:#fce8e6;color:#b3261e}
+input{padding:11px;border:1px solid #d7dce2;border-radius:9px;outline:0}
+.room{font-weight:800;letter-spacing:2px;background:#f1f3f4;padding:11px 14px;border-radius:9px}
+.drop{border:2px dashed #b8cdf3;background:#f8fbff;border-radius:14px;padding:35px;text-align:center;cursor:pointer}
+.drop.drag{background:#e8f0fe;border-color:#1a73e8}
+.status{font-size:13px;color:#5f6368;margin-top:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.card{background:#fff;border:1px solid #e1e5ea;border-radius:12px;padding:11px;min-width:0}
+.preview{height:145px;background:#eef1f4;border-radius:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.preview img,.preview video{width:100%;height:100%;object-fit:cover}.ico{font-size:50px}
+.name{font-weight:700;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:12px;color:#6b7280;margin-top:5px}
+.actions{display:flex;gap:6px;margin-top:10px}.actions .btn{flex:1;text-decoration:none;text-align:center}
+.progress{height:7px;background:#e8eaed;border-radius:99px;overflow:hidden;margin-top:7px}.progress i{width:0;height:100%;display:block;background:#34a853}
+.queue{display:grid;gap:8px}.upload{border:1px solid #e1e5ea;background:#fff;border-radius:10px;padding:9px}.small{font-size:12px;color:#6b7280}
+.empty{text-align:center;color:#777;padding:45px}
+.hidden{display:none}
+@media(max-width:650px){main{padding:10px}.row{align-items:stretch}.row>*{width:100%}}
 </style>
 </head>
 <body>
-<div class="drive-container">
-  <div class="header">
-    <div class="logo">📂 UNLIMITED DRIVE</div>
-    <div class="badge">☁️ Lưu chung cho mọi người</div>
+<header>
+  <div class="logo">☁ Temporary Drive</div>
+  <div class="sub">P2P • không Firebase Storage • không lưu cloud</div>
+</header>
+
+<main>
+  <div class="panel">
+    <div class="row">
+      <button id="hostBtn" class="btn primary">Tạo phòng</button>
+      <input id="roomInput" placeholder="Nhập mã phòng">
+      <button id="joinBtn" class="btn gray">Vào phòng</button>
+      <span id="roomCode" class="room hidden"></span>
+      <button id="copyBtn" class="btn gray hidden">Copy mã</button>
+    </div>
+    <div id="status" class="status">Chưa kết nối.</div>
   </div>
 
-  <div class="upload-zone" id="uploadZone">
-    <div class="upload-icon">☁️</div>
-    <div class="upload-text">Nhấp để chọn file hoặc Kéo & Thả</div>
-    <div class="upload-sub">Ảnh • Video • Nhạc • PDF • ZIP • File khác</div>
-    <input id="fileInput" type="file" multiple hidden>
+  <div id="drivePanel" class="panel hidden">
+    <div id="drop" class="drop">
+      <b>Kéo & thả file vào đây</b><br>
+      <span class="small">hoặc bấm để chọn file</span>
+      <input id="picker" type="file" multiple hidden>
+    </div>
+    <div class="small" style="margin-top:9px">
+      File được truyền trực tiếp giữa các máy. <b>Host phải còn mở trang</b> để giữ phòng và file tạm thời.
+    </div>
   </div>
 
-  <div id="status" class="status"></div>
-  <div id="progressWrap" class="progress-wrap"></div>
+  <div id="queue" class="queue"></div>
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty">Tạo hoặc vào phòng để bắt đầu.</div>
+</main>
 
-  <div class="controls">
-    <input id="search" class="search" placeholder="🔍 Tìm kiếm file trong kho...">
-  </div>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+let peer=null, room=null, isHost=false;
+const connections=new Map();
+const files=new Map();
+const incoming=new Map();
 
-  <div id="fileGrid" class="file-grid"></div>
-  <div id="empty" class="empty">Đang tải danh sách file...</div>
-</div>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+const fmt=n=>{if(!n)return"0 B";const u=["B","KB","MB","GB","TB"];let i=Math.min(4,Math.floor(Math.log(n)/Math.log(1024)));return(n/1024**i).toFixed(i?1:0)+" "+u[i]};
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import {
-  getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
-import {
-  getDatabase, ref as dbRef, push, set, onValue, remove
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+function status(t){$("status").textContent=t}
+function setRoomUI(){ $("roomCode").textContent=room;$("roomCode").classList.remove("hidden");$("copyBtn").classList.remove("hidden");$("drivePanel").classList.remove("hidden");$("empty").classList.add("hidden") }
 
-const firebaseConfig = {
-  apiKey:"AIzaSyCDQsJ_NrGK5ouRLS7vFr55OBZQ0nKhHSk",
-  authDomain:"vietnam-life-game.firebaseapp.com",
-  databaseURL:"https://vietnam-life-game-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:"vietnam-life-game",
-  storageBucket:"vietnam-life-game.firebasestorage.app",
-  messagingSenderId:"134954120781",
-  appId:"1:134954120781:web:d7f762adb80bfce3140e04",
-  measurementId:"G-39VPPE1F9T"
-};
-
-const app=initializeApp(firebaseConfig);
-const storage=getStorage(app);
-const db=getDatabase(app);
-const filesRef=dbRef(db,"files");
-
-const uploadZone=document.getElementById("uploadZone");
-const fileInput=document.getElementById("fileInput");
-const grid=document.getElementById("fileGrid");
-const empty=document.getElementById("empty");
-const search=document.getElementById("search");
-const status=document.getElementById("status");
-const progressWrap=document.getElementById("progressWrap");
-
-let allFiles=[];
-
-function bytes(n){
-  if(!n) return "0 B";
-  const u=["B","KB","MB","GB","TB"];
-  const i=Math.min(u.length-1,Math.floor(Math.log(n)/Math.log(1024)));
-  return (n/Math.pow(1024,i)).toFixed(i?2:0)+" "+u[i];
+function makeCard(f){
+  const c=document.createElement("div");c.className="card";
+  const p=document.createElement("div");p.className="preview";
+  if((f.type||"").startsWith("image/")){const i=document.createElement("img");i.src=f.url;i.loading="lazy";p.appendChild(i)}
+  else if((f.type||"").startsWith("video/")){const v=document.createElement("video");v.src=f.url;v.controls=true;v.preload="metadata";p.appendChild(v)}
+  else p.innerHTML="<div class='ico'>📄</div>";
+  const n=document.createElement("div");n.className="name";n.title=f.name;n.textContent=f.name;
+  const m=document.createElement("div");m.className="meta";m.textContent=fmt(f.size);
+  const a=document.createElement("div");a.className="actions";
+  const d=document.createElement("a");d.className="btn primary";d.textContent="Tải";d.href=f.url;d.download=f.name;d.target="_blank";
+  const cp=document.createElement("button");cp.className="btn gray";cp.textContent="Copy";cp.onclick=async()=>{try{await navigator.clipboard.writeText(f.url);cp.textContent="✓"}catch{}setTimeout(()=>cp.textContent="Copy",1000)};
+  a.append(d,cp);c.append(p,n,m,a);return c
 }
-function date(t){return new Date(t).toLocaleString("vi-VN")}
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function icon(type){
-  if((type||"").startsWith("image/")) return "🖼️";
-  if((type||"").startsWith("video/")) return "🎬";
-  if((type||"").startsWith("audio/")) return "🎵";
-  if((type||"").includes("pdf")) return "📕";
-  if(/zip|rar|7z/.test(type||"")) return "📦";
-  return "📄";
-}
+function showFile(f){ if(files.has(f.id))return; files.set(f.id,f); $("grid").prepend(makeCard(f)); $("empty").classList.add("hidden") }
 
-function notify(msg,error=false){
-  status.textContent=msg;
-  status.className="status show"+(error?" error":"");
-  if(!error) setTimeout(()=>status.className="status",3500);
-}
+function sendTo(conn,msg){try{conn.send(msg)}catch(e){}}
+function broadcast(msg,exceptId=null){for(const [id,c] of connections){if(id!==exceptId && c.open)sendTo(c,msg)}}
 
-function createPreview(file){
-  const p=document.createElement("div");
-  p.className="file-preview";
-  const type=file.contentType||"";
-  if(type.startsWith("image/")){
-    const x=document.createElement("img"); x.src=file.url; x.loading="lazy"; p.appendChild(x);
-  }else if(type.startsWith("video/")){
-    const x=document.createElement("video"); x.src=file.url; x.controls=true; x.preload="metadata"; p.appendChild(x);
-  }else if(type==="application/pdf"){
-    const x=document.createElement("iframe"); x.src=file.url; p.appendChild(x);
-  }else{
-    const x=document.createElement("div"); x.className="file-icon"; x.textContent=icon(type); p.appendChild(x);
-  }
-  return p;
-}
-
-function render(){
-  const key=search.value.trim().toLowerCase();
-  const list=allFiles.filter(f=>(f.name||"").toLowerCase().includes(key))
-    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  grid.innerHTML="";
-  empty.style.display=list.length?"none":"block";
-  if(!list.length) empty.textContent=key?"Không tìm thấy file nào.":"Kho đang trống.";
-  list.forEach(f=>{
-    const card=document.createElement("div");
-    card.className="file-card";
-    card.appendChild(createPreview(f));
-
-    const name=document.createElement("div");
-    name.className="file-name";
-    name.title=f.name;
-    name.textContent=f.name;
-
-    const meta=document.createElement("div");
-    meta.className="file-date";
-    meta.textContent=`${bytes(f.size)} • ${date(f.createdAt)}`;
-
-    const actions=document.createElement("div");
-    actions.className="file-actions";
-
-    const dl=document.createElement("a");
-    dl.className="btn download"; dl.textContent="Tải về";
-    dl.href=f.url; dl.target="_blank"; dl.download=f.name;
-
-    const cp=document.createElement("button");
-    cp.className="btn copy"; cp.textContent="Copy Link";
-    cp.onclick=async()=>{
-      try{await navigator.clipboard.writeText(f.url);cp.textContent="✓ Đã copy";setTimeout(()=>cp.textContent="Copy Link",1000)}
-      catch{prompt("Copy link:",f.url)}
-    };
-
-    const del=document.createElement("button");
-    del.className="btn delete"; del.textContent="Xóa";
-    del.onclick=()=>deleteFile(f);
-
-    actions.append(dl,cp,del);
-    card.append(name,meta,actions);
-    grid.appendChild(card);
-  });
-}
-
-function progressItem(file){
-  const row=document.createElement("div");
-  row.className="progress-item";
-  row.innerHTML=`<div class="progress-top"><b>${esc(file.name)}</b><span>0%</span></div>
-  <div class="progress-bar"><div></div></div><div class="progress-state">Đang chuẩn bị...</div>`;
-  progressWrap.style.display="block";
-  progressWrap.prepend(row);
-  return {
-    row, percent:row.querySelector(".progress-top span"),
-    bar:row.querySelector(".progress-bar div"),
-    state:row.querySelector(".progress-state")
-  };
-}
-
-async function uploadFile(file){
-  const ui=progressItem(file);
-  notify(`☁️ Đang lưu "${file.name}" lên kho chung...`);
-
-  const clean=file.name.replace(/[^\w.\-() ]/g,"_").slice(0,180);
-  const path=`uploads/${new Date().toISOString().slice(0,10)}/${crypto.randomUUID()}_${clean}`;
-  const ref=storageRef(storage,path);
-
-  const task=uploadBytesResumable(ref,file,{
-    contentType:file.type||"application/octet-stream",
-    cacheControl:"public,max-age=31536000,immutable"
-  });
-
-  task.on("state_changed",
-    snap=>{
-      const p=snap.totalBytes?Math.round(snap.bytesTransferred/snap.totalBytes*100):0;
-      ui.percent.textContent=p+"%";
-      ui.bar.style.width=p+"%";
-      ui.state.textContent=p<100?"Đang tải lên...":"Đang lưu thông tin...";
-    },
-    err=>{
-      console.error(err);
-      ui.state.textContent="❌ "+(err.code||err.message);
-      ui.bar.style.background="#d93025";
-      notify(`Upload lỗi: ${err.code||err.message}`,true);
-    },
-    async()=>{
-      try{
-        const url=await getDownloadURL(task.snapshot.ref);
-
-        // Đây là phần làm file "lưu vĩnh viễn" và mọi người cùng thấy.
-        const record=push(filesRef);
-        await set(record,{
-          name:file.name,
-          size:file.size,
-          contentType:file.type||"application/octet-stream",
-          url:url,
-          storagePath:path,
-          createdAt:Date.now()
-        });
-
-        ui.percent.textContent="100%";
-        ui.bar.style.width="100%";
-        ui.state.textContent="✅ Đã lưu vào kho chung";
-        notify(`✅ "${file.name}" đã được lưu. Người khác mở trang cũng thấy file này.`);
-
-        setTimeout(()=>ui.row.remove(),1800);
-        if(!progressWrap.children.length) progressWrap.style.display="none";
-      }catch(err){
-        console.error(err);
-        ui.state.textContent="❌ Lưu danh sách thất bại";
-        ui.bar.style.background="#d93025";
-        notify(`File đã lên Storage nhưng không lưu được danh sách: ${err.code||err.message}`,true);
-      }
+function setupConnection(conn){
+  connections.set(conn.peer,conn);
+  conn.on("open",()=>{
+    status("✅ Đã kết nối. Phòng: "+room);
+    if(isHost){
+      sendTo(conn,{type:"sync",files:[...files.values()].map(f=>({id:f.id,name:f.name,size:f.size,type:f.type,data:f.data}))});
     }
-  );
+  });
+  conn.on("data",data=>handleData(conn,data));
+  conn.on("close",()=>connections.delete(conn.peer));
+  conn.on("error",e=>console.error("peer",e));
 }
 
-async function deleteFile(file){
-  if(!confirm(`Xóa "${file.name}" khỏi kho chung?`)) return;
-  try{
-    if(file.storagePath) await deleteObject(storageRef(storage,file.storagePath));
-    await remove(dbRef(db,"files/"+file.id));
-    notify("🗑️ Đã xóa khỏi kho chung.");
-  }catch(err){
-    console.error(err);
-    notify(`Không thể xóa: ${err.code||err.message}`,true);
+function handleData(conn,msg){
+  if(!msg||!msg.type)return;
+
+  if(msg.type==="hello" && isHost){
+    // no-op; open handler sends current files
+    return;
+  }
+
+  if(msg.type==="sync"){
+    (msg.files||[]).forEach(f=>{
+      if(!f.data)return;
+      const blob=new Blob([f.data],{type:f.type});
+      const url=URL.createObjectURL(blob);
+      showFile({id:f.id,name:f.name,size:f.size,type:f.type,url,data:f.data});
+    });
+    return;
+  }
+
+  if(msg.type==="file"){
+    const blob=new Blob([msg.data],{type:msg.typeName});
+    const url=URL.createObjectURL(blob);
+    const f={id:msg.id,name:msg.name,size:msg.size,type:msg.typeName,url,data:msg.data};
+    showFile(f);
+    if(isHost) broadcast({type:"file",id:f.id,name:f.name,size:f.size,typeName:f.type,data:f.data},conn.peer);
   }
 }
 
-uploadZone.onclick=()=>fileInput.click();
-fileInput.onchange=e=>{[...e.target.files].forEach(uploadFile);fileInput.value=""};
-["dragenter","dragover"].forEach(ev=>uploadZone.addEventListener(ev,e=>{e.preventDefault();uploadZone.classList.add("drag")}));
-["dragleave","drop"].forEach(ev=>uploadZone.addEventListener(ev,e=>{e.preventDefault();uploadZone.classList.remove("drag")}));
-uploadZone.addEventListener("drop",e=>[...e.dataTransfer.files].forEach(uploadFile));
-search.oninput=render;
+function addQueue(file){
+  const row=document.createElement("div");row.className="upload";row.innerHTML="<b>"+esc(file.name)+"</b><div class='progress'><i></i></div><div class='small'>Chuẩn bị...</div>";
+  $("queue").prepend(row);return {row,bar:row.querySelector("i"),state:row.querySelector(".small")}
+}
 
-// Quan trọng: đọc dữ liệu từ Firebase chứ không đọc dữ liệu local của riêng trình duyệt.
-onValue(filesRef,snap=>{
-  const data=snap.val()||{};
-  allFiles=Object.entries(data).map(([id,v])=>({id,...v}));
-  render();
-  empty.textContent=allFiles.length?"":"Kho đang trống.";
-},err=>{
-  console.error(err);
-  notify(`Không đọc được kho chung: ${err.code||err.message}`,true);
-  empty.textContent="Không thể đọc kho. Kiểm tra Firebase Rules.";
-});
+/* P2P uses ArrayBuffer chunks so large files don't have to be converted to base64. */
+async function sendFile(file){
+  if(!room||!peer){status("❌ Hãy tạo/vào phòng trước.");return}
+  const ui=addQueue(file);
+  const id=crypto.randomUUID();
+  const buffer=await file.arrayBuffer();
+  const f={id,name:file.name,size:file.size,type:file.type||"application/octet-stream",url:URL.createObjectURL(file),data:buffer};
+  // Show immediately on sender
+  showFile(f);
 
-render();
+  if(isHost){
+    // Host simply distributes it to all connected peers.
+    const msg={type:"file",id,name:file.name,size:file.size,typeName:f.type,data:buffer};
+    broadcast(msg);
+    ui.bar.style.width="100%";ui.state.textContent="✅ Đã chia sẻ cho phòng";
+  }else{
+    const host=connections.get(room);
+    if(!host||!host.open){ui.state.textContent="❌ Chưa kết nối host";return}
+    host.send({type:"file",id,name:file.name,size:file.size,typeName:f.type,data:buffer});
+    ui.bar.style.width="100%";ui.state.textContent="✅ Đã gửi cho host";
+  }
+  setTimeout(()=>ui.row.remove(),1800);
+}
+
+$("hostBtn").onclick=()=>{
+  if(peer)return;
+  room=randRoom();isHost=true;
+  peer=new Peer(room,{debug:1});
+  peer.on("open",id=>{room=id;setRoomUI();status("🟢 Bạn là HOST. Gửi mã phòng cho người khác.");});
+  peer.on("connection",setupConnection);
+  peer.on("error",e=>{console.error(e);status("❌ "+(e.type||e.message||"Lỗi PeerJS"));});
+};
+$("joinBtn").onclick=()=>{
+  if(peer)return;
+  room=$("roomInput").value.trim();
+  if(!room){status("❌ Nhập mã phòng.");return}
+  isHost=false;peer=new Peer();
+  peer.on("open",()=>{setRoomUI();const c=peer.connect(room,{reliable:true});setupConnection(c);status("⏳ Đang kết nối host...");});
+  peer.on("error",e=>{console.error(e);status("❌ Không vào được phòng: "+(e.type||e.message));});
+};
+$("copyBtn").onclick=async()=>{try{await navigator.clipboard.writeText(room);status("✅ Đã copy mã phòng")}catch{prompt("Mã phòng:",room)}};
+$("drop").onclick=()=>$("picker").click();
+$("picker").onchange=e=>{[...e.target.files].forEach(sendFile);e.target.value=""};
+$("drop").ondragover=e=>{e.preventDefault();$("drop").classList.add("drag")};
+$("drop").ondragleave=()=>$("drop").classList.remove("drag");
+$("drop").ondrop=e=>{e.preventDefault();$("drop").classList.remove("drag");[...e.dataTransfer.files].forEach(sendFile)};
+
+function randRoom(){return"td-"+Math.random().toString(36).slice(2,10)}
 </script>
 </body>
 </html>
